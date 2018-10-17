@@ -20,16 +20,22 @@ class BATTLETANK_API ABattleTank_PlayerController : public APlayerController
 public:
 UFUNCTION(BlueprintCallable)
 FORCEINLINE ATank* GetControlledTank() const { if (ControlledTank) return ControlledTank; else return nullptr; }
+virtual void Tick(float DeltaTime) override;
+void AimTowardsCrosshair();
 	
 
-
+UPROPERTY(EditDefaultsOnly)
+float AimRange;
 
 private:
+	ABattleTank_PlayerController();
 	ATank* ControlledTank;
 	
 	
 protected:
 // Called when the game starts or when spawned
 	void BeginPlay() override;
+	FHitResult GetAimLocation() const;
+	
 	
 };

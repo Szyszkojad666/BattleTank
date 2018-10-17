@@ -6,6 +6,12 @@
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+class USceneComponent;
+class UStaticMesh;
+class UBoxComponent;
+
 UCLASS()
 class BATTLETANK_API ATank : public APawn
 {
@@ -26,6 +32,19 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+		UCameraComponent* Camera;
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+		USpringArmComponent* SpringArm;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+		USceneComponent* Gimbal;
 	
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UStaticMeshComponent* SM_Body;
+
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	//	UBoxComponent* BoxCollision;
 };
