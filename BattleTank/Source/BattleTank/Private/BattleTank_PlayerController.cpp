@@ -9,6 +9,7 @@
 #include "Classes/GameFramework/SpringArmComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
+#include "BattleTank.h"
 
 static int32 DebugAimingDrawing = 0;
 FAutoConsoleVariableRef CVARDebugAimingDrawing(
@@ -20,6 +21,8 @@ FAutoConsoleVariableRef CVARDebugAimingDrawing(
 ABattleTank_PlayerController::ABattleTank_PlayerController()
 {
 	AimRange = 10000.0f;
+	CrosshairXLocation = 0.5;
+	CrosshairYLocation = 0.33333;
 }
 
 void ABattleTank_PlayerController::BeginPlay()
@@ -36,13 +39,17 @@ void ABattleTank_PlayerController::Tick(float DeltaTime)
 void ABattleTank_PlayerController::AimTowardsCrosshair()
 {
 	if (!ControlledTank) { return; }
-	GetAimLocation();
+	FHitResult HitResult;
+	if (GetAimLocation(HitResult))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HitLocation is: %s"), *HitResult.Location.ToString());
+	}
 }
 
-FHitResult ABattleTank_PlayerController::GetAimLocation() const
+bool ABattleTank_PlayerController::GetAimLocation(FHitResult& Hit) const
 {
 	//Query params
-	FHitResult Hit;
+	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 	QueryParams.AddIgnoredActor(ControlledTank);
@@ -55,20 +62,35 @@ FHitResult ABattleTank_PlayerController::GetAimLocation() const
 	FVector TraceEnd;
 	FVector TracerEnd;
 
+	//Set Viewport Size Variables
+	int32 ViewportSizeX, ViewportSizeY;
+	GetViewportSize(ViewportSizeX, ViewportSizeY);
+	FVector2D ScreenLocation = FVector2D(ViewportSizeX * CrosshairXLocation, ViewportSizeY * CrosshairYLocation);
+
 	if (ControlledTank)
 	{
-		ShotDirection = ControlledTank->Camera->GetComponentRotation();
-		CameraLocation = ControlledTank->Camera->GetComponentLocation();
-		TraceEnd = ControlledTank->Camera->GetComponentLocation() + (ShotDirection.Vector() * AimRange);
+		GetPlayerViewPoint(CameraLocation, ShotDirection);
+		ShotDirection.Pitch += AimPitchOffset;
+		TraceEnd = CameraLocation + (ShotDirection.Vector() * AimRange);
 		TracerEnd = TraceEnd;
 		if (DebugAimingDrawing > 0)
 		{
-			DrawDebugLine(GetWorld(), CameraLocation, Hit.TraceEnd, FColor::Red, false, 1.0f, 0, 1.0f);
+			DrawDebugLine(GetWorld(), CameraLocation, TraceEnd, FColor::Red, false, 1.0f, 0, 1.0f);
 		}
-		if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, TraceEnd, ECC_Visibility, QueryParams))
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, CameraLocation, TraceEnd, COLLISION_WEAPON, QueryParams))
 		{
-			return Hit;
+			if (DebugAimingDrawing > 0)
+			{
+				DrawDebugSphere(GetWorld(), HitResult.Location, 100.0f, 12, FColor::Red, false, 0.5f, 0, 3.0f);
+			}
+			Hit = HitResult;
+			return true;
 		}
 	}
-	return Hit;
+	return false;
+}
+
+void ABattleTank_PlayerController::GetPlayerViewPoint(FVector & Location, FRotator & Rotation) const
+{
+	Super::GetPlayerViewPoint(Location, Rotation);
 }

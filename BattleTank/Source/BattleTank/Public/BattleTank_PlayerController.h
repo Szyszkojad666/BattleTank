@@ -22,10 +22,19 @@ UFUNCTION(BlueprintCallable)
 FORCEINLINE ATank* GetControlledTank() const { if (ControlledTank) return ControlledTank; else return nullptr; }
 virtual void Tick(float DeltaTime) override;
 void AimTowardsCrosshair();
-	
+virtual void GetPlayerViewPoint(FVector & Location, FRotator & Rotation)const;
 
 UPROPERTY(EditDefaultsOnly)
 float AimRange;
+
+UPROPERTY(EditDefaultsOnly)
+float AimPitchOffset;
+
+UPROPERTY(EditDefaultsOnly)
+float CrosshairXLocation;
+
+UPROPERTY(EditDefaultsOnly)
+float CrosshairYLocation;
 
 private:
 	ABattleTank_PlayerController();
@@ -35,7 +44,7 @@ private:
 protected:
 // Called when the game starts or when spawned
 	void BeginPlay() override;
-	FHitResult GetAimLocation() const;
+	bool GetAimLocation(FHitResult& Hit) const;
 	
 	
 };
