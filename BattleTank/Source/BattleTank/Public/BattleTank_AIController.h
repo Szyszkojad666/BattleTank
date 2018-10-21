@@ -6,7 +6,6 @@
 #include "AIController.h"
 #include "BattleTank_AIController.generated.h"
 
-
 class ATank;
 /**
  * 
@@ -21,6 +20,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void AimTowardsCrosshair();
 
-	
-	
+private:
+	ATank* ControlledTank;
+	void BeginPlay() override;
+	ATank* PlayerTank;
 };

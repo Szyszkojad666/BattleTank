@@ -7,6 +7,7 @@
 #include "BattleTank_PlayerController.generated.h"
 
 
+
 class ATank;
 /**
  * 
@@ -20,9 +21,8 @@ class BATTLETANK_API ABattleTank_PlayerController : public APlayerController
 public:
 UFUNCTION(BlueprintCallable)
 FORCEINLINE ATank* GetControlledTank() const { if (ControlledTank) return ControlledTank; else return nullptr; }
-virtual void Tick(float DeltaTime) override;
+
 void AimTowardsCrosshair();
-virtual void GetPlayerViewPoint(FVector & Location, FRotator & Rotation)const;
 
 UPROPERTY(EditDefaultsOnly)
 float AimRange;
@@ -39,8 +39,8 @@ float CrosshairYLocation;
 private:
 	ABattleTank_PlayerController();
 	ATank* ControlledTank;
-	
-	
+	virtual void Tick(float DeltaTime) override;
+
 protected:
 // Called when the game starts or when spawned
 	void BeginPlay() override;

@@ -40,9 +40,9 @@ void ABattleTank_PlayerController::AimTowardsCrosshair()
 {
 	if (!ControlledTank) { return; }
 	FHitResult HitResult;
-	if (GetAimLocation(HitResult))
+	if (GetAimLocation(HitResult) && ControlledTank)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HitLocation is: %s"), *HitResult.Location.ToString());
+		ControlledTank->AimAt(HitResult.Location);
 	}
 }
 
@@ -58,20 +58,24 @@ bool ABattleTank_PlayerController::GetAimLocation(FHitResult& Hit) const
 
 	//Trace variables declaration
 	FVector CameraLocation;
-	FRotator ShotDirection;
+	FVector ShotDirection;
 	FVector TraceEnd;
 	FVector TracerEnd;
 
 	//Set Viewport Size Variables
 	int32 ViewportSizeX, ViewportSizeY;
 	GetViewportSize(ViewportSizeX, ViewportSizeY);
+	
+	// HACK Because the crosshair position is not in the center and can be changed in the Widget
+	//TODO: Read the screen position of the crosshair from the Widget  
 	FVector2D ScreenLocation = FVector2D(ViewportSizeX * CrosshairXLocation, ViewportSizeY * CrosshairYLocation);
+	
+	// To find the beginning and direction of the trace
+	DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, CameraLocation, ShotDirection);
 
 	if (ControlledTank)
 	{
-		GetPlayerViewPoint(CameraLocation, ShotDirection);
-		ShotDirection.Pitch += AimPitchOffset;
-		TraceEnd = CameraLocation + (ShotDirection.Vector() * AimRange);
+		TraceEnd = CameraLocation + (ShotDirection * AimRange);
 		TracerEnd = TraceEnd;
 		if (DebugAimingDrawing > 0)
 		{
@@ -90,7 +94,3 @@ bool ABattleTank_PlayerController::GetAimLocation(FHitResult& Hit) const
 	return false;
 }
 
-void ABattleTank_PlayerController::GetPlayerViewPoint(FVector & Location, FRotator & Rotation) const
-{
-	Super::GetPlayerViewPoint(Location, Rotation);
-}

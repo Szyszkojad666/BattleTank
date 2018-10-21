@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAimAtLocation, FVector, Location);
+
 class USpringArmComponent;
 class UCameraComponent;
 class USceneComponent;
@@ -17,9 +19,6 @@ class BATTLETANK_API ATank : public APawn
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this pawn's properties
-	ATank();
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,6 +31,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void AimAt(FVector Location);
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		UCameraComponent* Camera;
 
@@ -45,6 +46,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* SM_Body;
 
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	//	UBoxComponent* BoxCollision;
+	UPROPERTY(BlueprintAssignable)
+		FAimAtLocation AimAtLocation;
+
+private:
+	ATank();
 };
