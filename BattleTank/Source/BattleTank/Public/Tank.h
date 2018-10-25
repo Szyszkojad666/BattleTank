@@ -13,6 +13,7 @@ class UCameraComponent;
 class USceneComponent;
 class UStaticMesh;
 class UBoxComponent;
+class UTankAimingComponent;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -23,6 +24,9 @@ class BATTLETANK_API ATank : public APawn
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	UTankAimingComponent* TankAimingComponent;
+
+	UStaticMeshComponent* Barrel;
 
 public:	
 	// Called every frame
@@ -35,6 +39,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		UCameraComponent* Camera;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float LaunchSpeed;
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -48,6 +55,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 		FAimAtLocation AimAtLocation;
+
+	UFUNCTION(BlueprintCallable)
+		void SetBarrelReference(UStaticMeshComponent* BarrelRef);
 
 private:
 	ATank();

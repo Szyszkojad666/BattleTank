@@ -6,6 +6,13 @@
 #include "Classes/Components/SceneComponent.h"
 #include "Classes/Components/StaticMeshComponent.h"
 #include "Classes/Components/BoxComponent.h"
+#include "TankAimingComponent.h"
+
+void ATank::SetBarrelReference(UStaticMeshComponent * BarrelRef)
+{
+	if (BarrelRef)
+		TankAimingComponent->SetBarrelReference(BarrelRef);
+}
 
 // Sets default values
 ATank::ATank()
@@ -16,6 +23,7 @@ ATank::ATank()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	Gimbal = CreateDefaultSubobject<USceneComponent>(TEXT("Gimbal"));
 	SM_Body = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SM_Body"));
+	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(TEXT("TankAimingComponent"));
 	//BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	//BoxCollision->SetupAttachment(RootComponent);
 	//BoxCollision->SetBoxExtent(FVector(400, 400, 100));
@@ -26,6 +34,7 @@ ATank::ATank()
 	SpringArm->SetupAttachment(Gimbal);
 	SpringArm->bUsePawnControlRotation = false;
 	Camera->SetupAttachment(SpringArm);
+	LaunchSpeed = 100000.0f;
 
 }
 
@@ -53,5 +62,6 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void ATank::AimAt(FVector Location)
 {
 	AimAtLocation.Broadcast(Location);
+	TankAimingComponent->AimAt(Location, LaunchSpeed);
 }
 
