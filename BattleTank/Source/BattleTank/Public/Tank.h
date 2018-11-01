@@ -6,7 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAimAtLocation, FVector, Location);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAimBarrel, FRotator, Rotation);
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -54,7 +54,7 @@ public:
 		UStaticMeshComponent* SM_Body;
 
 	UPROPERTY(BlueprintAssignable)
-		FAimAtLocation AimAtLocation;
+		FAimBarrel AimBarrel;
 
 	UFUNCTION(BlueprintCallable)
 		void SetBarrelReference(UStaticMeshComponent* BarrelRef);

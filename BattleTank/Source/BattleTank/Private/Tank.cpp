@@ -61,7 +61,6 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ATank::AimAt(FVector Location)
 {
-	AimAtLocation.Broadcast(Location);
 	TankAimingComponent->AimAt(Location, LaunchSpeed);
 }
 
