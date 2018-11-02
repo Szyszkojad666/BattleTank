@@ -14,6 +14,7 @@ class USceneComponent;
 class UStaticMesh;
 class UBoxComponent;
 class UTankAimingComponent;
+class UTankBarrelComponent;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -26,11 +27,9 @@ protected:
 	virtual void BeginPlay() override;
 	UTankAimingComponent* TankAimingComponent;
 
-	UStaticMeshComponent* Barrel;
+	UTankBarrelComponent* Barrel;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -57,7 +56,7 @@ public:
 		FAimBarrel AimBarrel;
 
 	UFUNCTION(BlueprintCallable)
-		void SetBarrelReference(UStaticMeshComponent* BarrelRef);
+		void SetBarrelReference(UTankBarrelComponent* BarrelRef);
 
 private:
 	ATank();

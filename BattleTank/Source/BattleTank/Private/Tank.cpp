@@ -7,8 +7,9 @@
 #include "Classes/Components/StaticMeshComponent.h"
 #include "Classes/Components/BoxComponent.h"
 #include "TankAimingComponent.h"
+#include "TankBarrelComponent.h"
 
-void ATank::SetBarrelReference(UStaticMeshComponent * BarrelRef)
+void ATank::SetBarrelReference(UTankBarrelComponent * BarrelRef)
 {
 	if (BarrelRef)
 		TankAimingComponent->SetBarrelReference(BarrelRef);
@@ -18,7 +19,7 @@ void ATank::SetBarrelReference(UStaticMeshComponent * BarrelRef)
 ATank::ATank()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	Gimbal = CreateDefaultSubobject<USceneComponent>(TEXT("Gimbal"));
@@ -42,15 +43,8 @@ ATank::ATank()
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
-void ATank::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
 // Called to bind functionality to input
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
