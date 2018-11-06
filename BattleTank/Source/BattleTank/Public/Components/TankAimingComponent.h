@@ -9,6 +9,7 @@
 class ATank;
 
 class UTankBarrelComponent;
+class UTankTurretComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BATTLETANK_API UTankAimingComponent : public UActorComponent
@@ -20,6 +21,7 @@ public:
 	UTankAimingComponent();
 
 	void SetBarrelReference(UTankBarrelComponent* BarrelRef);
+	void SetTurretReference(UTankTurretComponent* TurretRef);
 
 
 
@@ -33,6 +35,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UTankBarrelComponent* Barrel;
+	UTankTurretComponent* Turret;
 
 	ATank* MyOwnerTank;
 

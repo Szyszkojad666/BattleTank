@@ -15,6 +15,15 @@ void ATank::SetBarrelReference(UTankBarrelComponent * BarrelRef)
 		TankAimingComponent->SetBarrelReference(BarrelRef);
 }
 
+void ATank::SetTurretReference(UTankTurretComponent * Turret)
+{
+	if (Turret)
+	{
+		TurretComp = Turret;
+		TankAimingComponent->SetTurretReference(TurretComp);
+	}
+}
+
 // Sets default values
 ATank::ATank()
 {

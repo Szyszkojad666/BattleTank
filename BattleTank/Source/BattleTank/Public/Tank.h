@@ -15,6 +15,7 @@ class UStaticMesh;
 class UBoxComponent;
 class UTankAimingComponent;
 class UTankBarrelComponent;
+class UTankTurretComponent;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -28,6 +29,7 @@ protected:
 	UTankAimingComponent* TankAimingComponent;
 
 	UTankBarrelComponent* Barrel;
+	UTankTurretComponent* TurretComp;
 
 public:	
 
@@ -58,6 +60,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SetBarrelReference(UTankBarrelComponent* BarrelRef);
 
+	UFUNCTION(BlueprintCallable)
+		void SetTurretReference(UTankTurretComponent* Turret);
+
+	UFUNCTION(BlueprintCallable)
+		FORCEINLINE UTankTurretComponent* GetTurret() { if (TurretComp) return TurretComp; else return nullptr; }
 private:
 	ATank();
 };
