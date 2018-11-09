@@ -39,14 +39,12 @@ void ABattleTank_PlayerController::Tick(float DeltaTime)
 void ABattleTank_PlayerController::AimTowardsCrosshair()
 {
 	if (!ControlledTank) { return; }
-	FHitResult HitResult;
-	if (GetAimLocation(HitResult) && ControlledTank)
 	{
-		ControlledTank->AimAt(HitResult.Location);
+		GetAimLocation();
 	}
 }
 
-bool ABattleTank_PlayerController::GetAimLocation(FHitResult& Hit) const
+void ABattleTank_PlayerController::GetAimLocation()
 {
 	//Query params
 	FHitResult HitResult;
@@ -87,10 +85,13 @@ bool ABattleTank_PlayerController::GetAimLocation(FHitResult& Hit) const
 			{
 				DrawDebugSphere(GetWorld(), HitResult.Location, 100.0f, 12, FColor::Red, false, 0.5f, 0, 3.0f);
 			}
-			Hit = HitResult;
-			return true;
+			ControlledTank->AimAt(HitResult.Location);
 		}
+		else
+		{
+			ControlledTank->AimAt(TraceEnd);
+		}		
 	}
-	return false;
 }
+	
 

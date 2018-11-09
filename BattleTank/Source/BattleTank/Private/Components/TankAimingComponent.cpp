@@ -6,6 +6,7 @@
 #include "Tank.h"
 #include "TankBarrelComponent.h"
 #include "TankTurretComponent.h"
+#include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -73,6 +74,13 @@ void UTankAimingComponent::AimAt(FVector Location, float LaunchSpeed)
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
 		MoveBarrel(AimDirection);
 	}
+	else
+	{
+		FRotator AimRotaton = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), Location);
+		FVector AimDirection = AimRotaton.Vector();
+		MoveBarrel(AimDirection);
+	}
+	
 }
 
 void UTankAimingComponent::MoveBarrel(FVector ShotDirection)

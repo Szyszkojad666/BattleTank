@@ -65,6 +65,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		FORCEINLINE UTankTurretComponent* GetTurret() { if (TurretComp) return TurretComp; else return nullptr; }
+
+	UFUNCTION(BlueprintCallable)
+		void Fire();
+
 private:
 	ATank();
 };

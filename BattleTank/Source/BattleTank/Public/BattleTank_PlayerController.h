@@ -44,7 +44,7 @@ private:
 protected:
 // Called when the game starts or when spawned
 	void BeginPlay() override;
-	bool GetAimLocation(FHitResult& Hit) const;
+	void GetAimLocation();
 	
 	
 };

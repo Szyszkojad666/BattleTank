@@ -8,6 +8,7 @@
 #include "Classes/Components/BoxComponent.h"
 #include "TankAimingComponent.h"
 #include "TankBarrelComponent.h"
+#include "Runtime/Engine/Classes/Components/InputComponent.h"
 
 void ATank::SetBarrelReference(UTankBarrelComponent * BarrelRef)
 {
@@ -22,6 +23,10 @@ void ATank::SetTurretReference(UTankTurretComponent * Turret)
 		TurretComp = Turret;
 		TankAimingComponent->SetTurretReference(TurretComp);
 	}
+}
+
+void ATank::Fire()
+{
 }
 
 // Sets default values
@@ -59,6 +64,8 @@ void ATank::BeginPlay()
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ATank::Fire);
 
 }
 
