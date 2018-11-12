@@ -16,6 +16,7 @@ class UBoxComponent;
 class UTankAimingComponent;
 class UTankBarrelComponent;
 class UTankTurretComponent;
+class AProjectile;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -44,6 +45,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float LaunchSpeed;
 
+	UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<AProjectile> DefaultProjectile;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		USpringArmComponent* SpringArm;
@@ -57,6 +60,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 		FAimBarrel AimBarrel;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float ReloadTimeInSeconds;
+
 	UFUNCTION(BlueprintCallable)
 		void SetBarrelReference(UTankBarrelComponent* BarrelRef);
 
@@ -69,6 +75,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void Fire();
 
+
 private:
 	ATank();
+
+	double LastFireTime = 0;
 };

@@ -24,4 +24,5 @@ private:
 	ATank* ControlledTank;
 	void BeginPlay() override;
 	ATank* PlayerTank;
+	void Fire();
 };

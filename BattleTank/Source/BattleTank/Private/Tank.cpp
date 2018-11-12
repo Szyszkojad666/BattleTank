@@ -9,30 +9,13 @@
 #include "TankAimingComponent.h"
 #include "TankBarrelComponent.h"
 #include "Runtime/Engine/Classes/Components/InputComponent.h"
-
-void ATank::SetBarrelReference(UTankBarrelComponent * BarrelRef)
-{
-	if (BarrelRef)
-		TankAimingComponent->SetBarrelReference(BarrelRef);
-}
-
-void ATank::SetTurretReference(UTankTurretComponent * Turret)
-{
-	if (Turret)
-	{
-		TurretComp = Turret;
-		TankAimingComponent->SetTurretReference(TurretComp);
-	}
-}
-
-void ATank::Fire()
-{
-}
+#include "Projectile.h"
+#include "Classes/Engine/World.h"
 
 // Sets default values
 ATank::ATank()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -50,8 +33,45 @@ ATank::ATank()
 	SpringArm->bUsePawnControlRotation = false;
 	Camera->SetupAttachment(SpringArm);
 	LaunchSpeed = 100000.0f;
-
+	ReloadTimeInSeconds = 2.0f;
 }
+
+void ATank::SetBarrelReference(UTankBarrelComponent * BarrelRef)
+{
+	if (BarrelRef)
+		TankAimingComponent->SetBarrelReference(BarrelRef);
+		Barrel = BarrelRef;
+}
+
+void ATank::SetTurretReference(UTankTurretComponent * Turret)
+{
+	if (Turret)
+	{
+		TurretComp = Turret;
+		TankAimingComponent->SetTurretReference(TurretComp);
+	}
+}
+
+void ATank::Fire()
+{
+	bool IsReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
+	if (Barrel && IsReloaded)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(DefaultProjectile,
+				Barrel->GetSocketLocation("S_Muzzle"),
+				Barrel->GetSocketRotation("S_Muzzle"),
+				SpawnParams
+				);	
+			if (Projectile)
+			{
+				Projectile->Launch(LaunchSpeed);
+				LastFireTime = FPlatformTime::Seconds();
+			}
+	}
+}
+
 
 // Called when the game starts or when spawned
 void ATank::BeginPlay()
