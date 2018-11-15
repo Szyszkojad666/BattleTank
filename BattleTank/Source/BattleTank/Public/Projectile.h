@@ -8,6 +8,7 @@
 
 class UStaticMeshComponent;
 class UProjectileMovementComponent;
+class USphereComponent;
 
 UCLASS()
 class BATTLETANK_API AProjectile : public AActor
@@ -27,6 +28,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 		UProjectileMovementComponent* ProjectileMovementComp;
+
+	UPROPERTY(EditDefaultsOnly)
+		USphereComponent* CollisionSphere;
 
 public:	
 	// Called every frame

@@ -3,7 +3,7 @@
 #include "Projectile.h"
 #include "Classes/Components/StaticMeshComponent.h"
 #include "Classes/GameFramework/ProjectileMovementComponent.h"
-
+#include "Classes/Components/SphereComponent.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -14,7 +14,7 @@ AProjectile::AProjectile()
 	ProjectileMovementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComp->bAutoActivate = false;
 	ProjectileMesh->SetupAttachment(RootComponent);
-
+	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere"));
 
 }
 
