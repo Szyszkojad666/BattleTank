@@ -11,6 +11,7 @@
 #include "Runtime/Engine/Classes/Components/InputComponent.h"
 #include "Projectile.h"
 #include "Classes/Engine/World.h"
+#include "TankMovementComponent.h"
 
 // Sets default values
 ATank::ATank()
@@ -21,6 +22,7 @@ ATank::ATank()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	Gimbal = CreateDefaultSubobject<USceneComponent>(TEXT("Gimbal"));
 	SM_Body = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SM_Body"));
+	TankMovementComp = CreateDefaultSubobject<UTankMovementComponent>(TEXT("TankMovementComponent"));
 	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(TEXT("TankAimingComponent"));
 	//BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	//BoxCollision->SetupAttachment(RootComponent);
@@ -28,6 +30,7 @@ ATank::ATank()
 	SM_Body->SetupAttachment(RootComponent);
 	SM_Body->SetSimulatePhysics(true);
 	SM_Body->SetMassOverrideInKg(NAME_None, 40000.0f);
+	SM_Body->SetEnableGravity(true);
 	Gimbal->SetupAttachment(SM_Body);
 	SpringArm->SetupAttachment(Gimbal);
 	SpringArm->bUsePawnControlRotation = false;

@@ -16,7 +16,9 @@ class UBoxComponent;
 class UTankAimingComponent;
 class UTankBarrelComponent;
 class UTankTurretComponent;
+class UTankMovementComponent;
 class AProjectile;
+
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -31,6 +33,9 @@ protected:
 
 	UTankBarrelComponent* Barrel;
 	UTankTurretComponent* TurretComp;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+		UTankMovementComponent* TankMovementComp;
 
 public:	
 
@@ -38,6 +43,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void AimAt(FVector Location);
+
+	//Max force on track in newtons
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+		float TrackMaxDrivingForce = 400000;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		UCameraComponent* Camera;

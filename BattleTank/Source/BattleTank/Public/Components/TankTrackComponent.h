@@ -9,18 +9,17 @@
 /**
  * 
  */
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent), hidecategories = ("Collision"))
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BATTLETANK_API UTankTrackComponent : public UStaticMeshComponent
 {
 	GENERATED_BODY()
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = Input)
-		void SetThrottle(float Throttle);
+		void SetThrottle(float Throttle, float MaxForce);
 
-	//Max force on track in newtons
-	UPROPERTY(EditDefaultsOnly)
-		float TrackMaxDrivingForce = 400000;
+	
+	
 	
 	
 };
