@@ -1,10 +1,37 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankMovementComponent.h"
+#include "TankTrackComponent.h"
 
-
-void UTankMovementComponent::MoveForward(float Throw)
+void UTankMovementComponent::Initialise(UTankTrackComponent* LeftTrackToSet, UTankTrackComponent* RightTrackToSet)
 {
-	UE_LOG(LogTemp, Warning, TEXT("It's working: %f"), Throw);
+	LeftTrack = LeftTrackToSet;
+	RightTrack = RightTrackToSet;
 }
 
+void UTankMovementComponent::MoveForward(float Throw, float Speed)
+{
+	if (LeftTrack && RightTrack)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("It's working: %f"), Throw);
+		LeftTrack->SetThrottle(Throw, Speed);
+		RightTrack->SetThrottle(Throw, Speed);
+	}
+}
+
+void UTankMovementComponent::TurnRight(float Throw, float Speed)
+{
+	if (LeftTrack && RightTrack)
+	{
+		if (Throw > 0.0)
+		{
+			RightTrack->SetThrottle(-Throw, Speed);
+			LeftTrack->SetThrottle(Throw, Speed);
+		}
+		if (Throw < 0.0)
+		{
+			RightTrack->SetThrottle(-Throw, Speed);
+			LeftTrack->SetThrottle(Throw, Speed);
+		}
+	}
+}
