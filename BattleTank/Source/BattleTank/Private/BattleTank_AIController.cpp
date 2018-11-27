@@ -39,6 +39,11 @@ ATank* ABattleTank_AIController:: GetPlayerTank()
 void ABattleTank_AIController::Tick(float DeltaTime)
 {
 	AimTowardsCrosshair();
+	if (PlayerTank)
+	{
+		MoveToActor(PlayerTank, 300.0f);
+	}
+	
 }
 
 void ABattleTank_AIController::AimTowardsCrosshair()
