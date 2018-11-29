@@ -36,7 +36,7 @@ void UTankMovementComponent::TurnRight(float Throw, float Speed)
 	}
 }
 
-void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, bool bForceMaxSpeed)
+void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
 {
 	FString MoveVelocityString = MoveVelocity.ToString();
 	UE_LOG(LogTemp, Warning, TEXT("Move velocity is: %s"), *MoveVelocityString);

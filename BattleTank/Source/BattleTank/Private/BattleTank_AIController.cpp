@@ -5,6 +5,7 @@
 #include "Tank.h"
 #include "Engine/World.h"
 #include "Runtime/Engine/Public/TimerManager.h"
+#include "TankMovementComponent.h"
 
 
 
@@ -15,6 +16,10 @@ void ABattleTank_AIController::BeginPlay()
 	GetPlayerTank();
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABattleTank_AIController::Fire, 2.0f, true, 3.0f);
+	if (ControlledTank)
+	{
+		TankMovementComp = ControlledTank->GetTankMovementComponent();
+	}
 }
 
 void ABattleTank_AIController::Fire()
@@ -41,7 +46,7 @@ void ABattleTank_AIController::Tick(float DeltaTime)
 	AimTowardsCrosshair();
 	if (PlayerTank)
 	{
-		MoveToActor(PlayerTank, 300.0f);
+		//MoveToActor(PlayerTank, 300.0f);
 	}
 	
 }
@@ -53,6 +58,19 @@ void ABattleTank_AIController::AimTowardsCrosshair()
 		FVector AimLocation = PlayerTank->GetActorLocation();
 		ControlledTank->AimAt(AimLocation);
 	}
+}
+
+FPathFollowingRequestResult ABattleTank_AIController::MoveTo(const FAIMoveRequest & MoveRequest, FNavPathSharedPtr * OutPath)
+{
+	Super::MoveTo(MoveRequest, OutPath);
+	FVector Destination = MoveRequest.GetDestination();
+	FVector Velocity = Destination - ControlledTank->GetActorLocation();
+	if (TankMovementComp)
+	{
+		TankMovementComp->RequestDirectMove(Velocity, false);
+	}
+	
+	return FPathFollowingRequestResult();
 }
 
 

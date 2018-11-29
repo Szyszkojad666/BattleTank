@@ -46,7 +46,7 @@ public:
 
 	//Max force on track in newtons
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		float TrackMaxDrivingForce = 400000;
+		float TrackMaxDrivingForce = 40000000;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		UCameraComponent* Camera;
@@ -84,7 +84,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void Fire();
 
-
+	UFUNCTION(BlueprintCallable)
+		FORCEINLINE UTankMovementComponent* GetTankMovementComponent() { return TankMovementComp; }
 private:
 	ATank();
 
