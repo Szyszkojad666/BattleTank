@@ -37,6 +37,7 @@ void UTankMovementComponent::TurnRight(float Throw)
 	}
 }
 
+// Called by nav component
 void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
 {
 	FVector NormalizedMoveVelocity = MoveVelocity.GetSafeNormal(); // Get a perpendicular vector to the direction of pathfinding goal

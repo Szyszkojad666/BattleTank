@@ -29,14 +29,21 @@ class BATTLETANK_API ATank : public APawn
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(BlueprintReadOnly)
 	UTankAimingComponent* TankAimingComponent;
-
-	UTankBarrelComponent* Barrel;
-	UTankTurretComponent* TurretComp;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		UTankMovementComponent* TankMovementComp;
+	UTankMovementComponent* TankMovementComp;
+	
+	UTankBarrelComponent* Barrel;
+	UTankTurretComponent* TurretComp;
 
+	bool IsReloaded;
+
+	void Reload();
+	void SetReloadedAndFiringState();
+	
 public:	
 
 	// Called to bind functionality to input

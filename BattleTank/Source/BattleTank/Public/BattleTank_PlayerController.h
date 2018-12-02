@@ -19,8 +19,6 @@ class BATTLETANK_API ABattleTank_PlayerController : public APlayerController
 
 
 public:
-UFUNCTION(BlueprintCallable)
-FORCEINLINE ATank* GetControlledTank() const { if (ControlledTank) return ControlledTank; else return nullptr; }
 
 void AimTowardsCrosshair();
 
@@ -46,5 +44,7 @@ protected:
 	void BeginPlay() override;
 	void GetAimLocation();
 	
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE ATank* GetControlledTank() const { if (ControlledTank) return ControlledTank; else return nullptr; }
 	
 };

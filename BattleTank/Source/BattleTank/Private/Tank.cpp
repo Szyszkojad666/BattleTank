@@ -12,6 +12,7 @@
 #include "Projectile.h"
 #include "Classes/Engine/World.h"
 #include "TankMovementComponent.h"
+#include "Runtime/Engine/Public/TimerManager.h"
 
 // Sets default values
 ATank::ATank()
@@ -71,6 +72,7 @@ void ATank::Fire()
 			{
 				Projectile->Launch(LaunchSpeed);
 				LastFireTime = FPlatformTime::Seconds();
+				Reload();
 			}
 	}
 }
@@ -82,6 +84,20 @@ void ATank::BeginPlay()
 	Super::BeginPlay();
 }
 
+
+void ATank::Reload()
+{
+	IsReloaded = false;
+	FTimerHandle ReloadTimerHandle;
+	TankAimingComponent->FiringState = EFiringState::Reloading;
+	GetWorldTimerManager().SetTimer(ReloadTimerHandle, this, &ATank::SetReloadedAndFiringState, ReloadTimeInSeconds, false, 0);
+}
+
+void ATank::SetReloadedAndFiringState()
+{
+	IsReloaded = true;
+	TankAimingComponent->FiringState = EFiringState::Reloaded;
+}
 
 // Called to bind functionality to input
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
