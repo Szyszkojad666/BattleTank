@@ -40,26 +40,20 @@ ATank::ATank()
 	ReloadTimeInSeconds = 2.0f;
 }
 
-void ATank::SetBarrelReference(UTankBarrelComponent * BarrelRef)
+void ATank::InitializeAimingComponentVariables(UTankBarrelComponent * BarrelRef, UTankTurretComponent * TurretRef)
 {
-	if (BarrelRef)
-		TankAimingComponent->SetBarrelReference(BarrelRef);
-		Barrel = BarrelRef;
-}
-
-void ATank::SetTurretReference(UTankTurretComponent * Turret)
-{
-	if (Turret)
+	if (ensure(BarrelRef && TurretRef))
 	{
-		TurretComp = Turret;
-		TankAimingComponent->SetTurretReference(TurretComp);
+		TankAimingComponent->Initialize(BarrelRef, TurretRef);
+		Barrel = BarrelRef;
+		TurretComp = TurretRef;
 	}
 }
 
 void ATank::Fire()
 {
-	bool IsReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
-	if (Barrel && IsReloaded)
+	if (ensure(!Barrel)) { return; }
+	if (IsReloaded)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -71,12 +65,10 @@ void ATank::Fire()
 			if (Projectile)
 			{
 				Projectile->Launch(LaunchSpeed);
-				LastFireTime = FPlatformTime::Seconds();
 				Reload();
 			}
 	}
 }
-
 
 // Called when the game starts or when spawned
 void ATank::BeginPlay()
@@ -84,13 +76,12 @@ void ATank::BeginPlay()
 	Super::BeginPlay();
 }
 
-
 void ATank::Reload()
 {
 	IsReloaded = false;
 	FTimerHandle ReloadTimerHandle;
 	TankAimingComponent->FiringState = EFiringState::Reloading;
-	GetWorldTimerManager().SetTimer(ReloadTimerHandle, this, &ATank::SetReloadedAndFiringState, ReloadTimeInSeconds, false, 0);
+	GetWorldTimerManager().SetTimer(ReloadTimerHandle, this, &ATank::SetReloadedAndFiringState, ReloadTimeInSeconds, false, ReloadTimeInSeconds);
 }
 
 void ATank::SetReloadedAndFiringState()
@@ -103,9 +94,7 @@ void ATank::SetReloadedAndFiringState()
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ATank::Fire);
-
 }
 
 void ATank::AimAt(FVector Location)

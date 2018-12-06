@@ -18,21 +18,6 @@ UTankAimingComponent::UTankAimingComponent()
 	// ...
 }
 
-
-void UTankAimingComponent::SetBarrelReference(UTankBarrelComponent * BarrelRef)
-{
-	if (BarrelRef)
-		Barrel = BarrelRef;
-}
-
-void UTankAimingComponent::SetTurretReference(UTankTurretComponent * TurretRef)
-{
-	if (TurretRef)
-	{
-		Turret = TurretRef;
-	}
-}
-
 // Called when the game starts
 void UTankAimingComponent::BeginPlay()
 {
@@ -40,6 +25,14 @@ void UTankAimingComponent::BeginPlay()
 	MyOwnerTank = Cast<ATank>(GetOwner());
 }
 
+void UTankAimingComponent::Initialize(UTankBarrelComponent * BarrelRef, UTankTurretComponent * TurretRef)
+{
+	if (BarrelRef && TurretRef)
+	{
+		Barrel = BarrelRef;
+		Turret = TurretRef;
+	}	
+}
 
 // Called every frame
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

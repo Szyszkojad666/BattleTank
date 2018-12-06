@@ -19,12 +19,10 @@ class UTankTurretComponent;
 class UTankMovementComponent;
 class AProjectile;
 
-
 UCLASS()
 class BATTLETANK_API ATank : public APawn
 {
 	GENERATED_BODY()
-
 
 protected:
 	// Called when the game starts or when spawned
@@ -37,11 +35,13 @@ protected:
 	UTankMovementComponent* TankMovementComp;
 	
 	UTankBarrelComponent* Barrel;
+
 	UTankTurretComponent* TurretComp;
 
-	bool IsReloaded;
+	bool IsReloaded = true;
 
 	void Reload();
+
 	void SetReloadedAndFiringState();
 	
 public:	
@@ -80,10 +80,7 @@ public:
 		float ReloadTimeInSeconds;
 
 	UFUNCTION(BlueprintCallable)
-		void SetBarrelReference(UTankBarrelComponent* BarrelRef);
-
-	UFUNCTION(BlueprintCallable)
-		void SetTurretReference(UTankTurretComponent* Turret);
+		void InitializeAimingComponentVariables(UTankBarrelComponent* BarrelRef, UTankTurretComponent* TurretRef);
 
 	UFUNCTION(BlueprintCallable)
 		FORCEINLINE UTankTurretComponent* GetTurret() { if (TurretComp) return TurretComp; else return nullptr; }
@@ -95,6 +92,4 @@ public:
 		FORCEINLINE UTankMovementComponent* GetTankMovementComponent() { return TankMovementComp; }
 private:
 	ATank();
-
-	double LastFireTime = 0;
 };
