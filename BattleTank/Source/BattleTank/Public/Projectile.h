@@ -32,11 +32,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 		USphereComponent* CollisionSphere;
 
+	
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void Launch(float Speed);
+	void Launch();
 	
-	
+	UPROPERTY(EditDefaultsOnly)
+		float LaunchSpeed = 1000.0f;
 };

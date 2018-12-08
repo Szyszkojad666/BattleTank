@@ -8,6 +8,7 @@
 
 class ATank;
 class UTankMovementComponent;
+class UTankAimingComponent;
 /**
  * 
  */
@@ -26,9 +27,12 @@ public:
 private:
 	
 	UTankMovementComponent* TankMovementComp;
+	UTankAimingComponent* TankAimingComp;
 	
 	ATank* ControlledTank;
-	void BeginPlay() override;
 	ATank* PlayerTank;
+	float ProjectileSpeed;
+
+	void BeginPlay() override;
 	void Fire();
 };

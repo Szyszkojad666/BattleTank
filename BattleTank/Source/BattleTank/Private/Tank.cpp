@@ -12,7 +12,7 @@
 #include "Projectile.h"
 #include "Classes/Engine/World.h"
 #include "TankMovementComponent.h"
-#include "Runtime/Engine/Public/TimerManager.h"
+
 
 // Sets default values
 ATank::ATank()
@@ -36,7 +36,6 @@ ATank::ATank()
 	SpringArm->SetupAttachment(Gimbal);
 	SpringArm->bUsePawnControlRotation = false;
 	Camera->SetupAttachment(SpringArm);
-	LaunchSpeed = 100000.0f;
 	ReloadTimeInSeconds = 2.0f;
 }
 
@@ -50,55 +49,10 @@ void ATank::InitializeAimingComponentVariables(UTankBarrelComponent * BarrelRef,
 	}
 }
 
-void ATank::Fire()
-{
-	if (ensure(!Barrel)) { return; }
-	if (IsReloaded)
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(DefaultProjectile,
-				Barrel->GetSocketLocation("S_Muzzle"),
-				Barrel->GetSocketRotation("S_Muzzle"),
-				SpawnParams
-				);	
-			if (Projectile)
-			{
-				Projectile->Launch(LaunchSpeed);
-				Reload();
-			}
-	}
-}
-
 // Called when the game starts or when spawned
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void ATank::Reload()
-{
-	IsReloaded = false;
-	FTimerHandle ReloadTimerHandle;
-	TankAimingComponent->FiringState = EFiringState::Reloading;
-	GetWorldTimerManager().SetTimer(ReloadTimerHandle, this, &ATank::SetReloadedAndFiringState, ReloadTimeInSeconds, false, ReloadTimeInSeconds);
-}
-
-void ATank::SetReloadedAndFiringState()
-{
-	IsReloaded = true;
-	TankAimingComponent->FiringState = EFiringState::Reloaded;
-}
-
-// Called to bind functionality to input
-void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ATank::Fire);
-}
-
-void ATank::AimAt(FVector Location)
-{
-	TankAimingComponent->AimAt(Location, LaunchSpeed);
-}
 

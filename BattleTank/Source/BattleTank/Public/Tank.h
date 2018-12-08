@@ -38,18 +38,9 @@ protected:
 
 	UTankTurretComponent* TurretComp;
 
-	bool IsReloaded = true;
-
-	void Reload();
-
-	void SetReloadedAndFiringState();
+	
 	
 public:	
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	void AimAt(FVector Location);
 
 	//Max force on track in newtons
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -58,9 +49,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		UCameraComponent* Camera;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float LaunchSpeed;
-
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<AProjectile> DefaultProjectile;
 
@@ -86,10 +74,10 @@ public:
 		FORCEINLINE UTankTurretComponent* GetTurret() { if (TurretComp) return TurretComp; else return nullptr; }
 
 	UFUNCTION(BlueprintCallable)
-		void Fire();
+		FORCEINLINE UTankMovementComponent* GetTankMovementComponent() { return TankMovementComp; }
 
 	UFUNCTION(BlueprintCallable)
-		FORCEINLINE UTankMovementComponent* GetTankMovementComponent() { return TankMovementComp; }
+		FORCEINLINE UTankAimingComponent* GetTankAimingComponent() { return TankAimingComponent; }
 private:
 	ATank();
 };

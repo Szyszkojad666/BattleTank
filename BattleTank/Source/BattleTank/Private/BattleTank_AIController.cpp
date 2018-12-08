@@ -6,6 +6,8 @@
 #include "Engine/World.h"
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "TankMovementComponent.h"
+#include "TankAimingComponent.h"
+#include "Projectile.h"
 
 
 
@@ -19,6 +21,7 @@ void ABattleTank_AIController::BeginPlay()
 	if (ControlledTank)
 	{
 		TankMovementComp = ControlledTank->GetTankMovementComponent();
+		TankAimingComp = ControlledTank->GetTankAimingComponent();
 	}
 }
 
@@ -26,7 +29,7 @@ void ABattleTank_AIController::Fire()
 {
 	if (ControlledTank)
 	{
-		ControlledTank->Fire();
+		TankAimingComp->Fire(ControlledTank->DefaultProjectile);
 	}
 }
 
@@ -39,6 +42,14 @@ ATank* ABattleTank_AIController:: GetPlayerTank()
 	}
 	else
 		return PlayerTank;
+	if (ControlledTank)
+	{
+		AProjectile* TankProjectile = Cast<AProjectile>(ControlledTank->DefaultProjectile);
+		if (ensure(TankProjectile))
+		{
+			ProjectileSpeed = TankProjectile->LaunchSpeed;
+		}
+	}
 }
 
 void ABattleTank_AIController::Tick(float DeltaTime)
@@ -56,7 +67,7 @@ void ABattleTank_AIController::AimTowardsCrosshair()
 	if (ControlledTank && PlayerTank)
 	{
 		FVector AimLocation = PlayerTank->GetActorLocation();
-		ControlledTank->AimAt(AimLocation);
+		ControlledTank->GetTankAimingComponent()->AimAt(AimLocation, ProjectileSpeed);
 	}
 }
 

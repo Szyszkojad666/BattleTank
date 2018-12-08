@@ -13,10 +13,9 @@ enum class EFiringState : uint8
 	Reloaded
 };
 
-
-class ATank;
 class UTankBarrelComponent;
 class UTankTurretComponent;
+class AProjectile;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BATTLETANK_API UTankAimingComponent : public UActorComponent
@@ -25,29 +24,37 @@ class BATTLETANK_API UTankAimingComponent : public UActorComponent
 
 public:	
 	// Sets default values for this component's properties
+	UPROPERTY(BlueprintReadOnly)
+		EFiringState FiringState = EFiringState::Reloaded;
+	
 	UTankAimingComponent();
-	void Initialize(UTankBarrelComponent* BarrelRef, UTankTurretComponent* TurretRef);
 
+	UFUNCTION(BlueprintCallable)
+	void Initialize(UTankBarrelComponent* BarrelRef, UTankTurretComponent* TurretRef);
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void AimAt(FVector Location, float LaunchSpeed);
 
-	UPROPERTY(BlueprintReadOnly)
-		EFiringState FiringState = EFiringState::Reloaded;
+	void Fire(TSubclassOf<AProjectile> ProjectileClass);
+
+	
 
 protected:
 	// Called when the game starts
-	virtual void BeginPlay() override;
-
 	UTankBarrelComponent* Barrel;
 	UTankTurretComponent* Turret;
+	bool IsReloaded = true;
 
-	ATank* MyOwnerTank;
-
+	virtual void BeginPlay() override;
+	void Reload();
+	
 private: 
+	
+	float ReloadTimeInSeconds = 1.0f;
+	
 	void MoveBarrel(FVector ShotDirection);
-
+	void SetReloadedAndFiringState();
 	
 	
 	

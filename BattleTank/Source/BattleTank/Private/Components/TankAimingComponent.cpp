@@ -3,26 +3,57 @@
 #include "TankAimingComponent.h"
 #include "Classes/Components/StaticMeshComponent.h"
 #include "Classes/Kismet/GameplayStatics.h"
-#include "Tank.h"
 #include "TankBarrelComponent.h"
 #include "TankTurretComponent.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
+#include "Projectile.h"
+#include "Runtime/Engine/Public/TimerManager.h"
+#include "Classes/Engine/World.h"
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+}
 
-	// ...
+void UTankAimingComponent::Fire(TSubclassOf<AProjectile> ProjectileClass)
+{
+	if (ensure(!Barrel)) { return; }
+	if (IsReloaded)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass,
+			Barrel->GetSocketLocation("S_Muzzle"),
+			Barrel->GetSocketRotation("S_Muzzle"),
+			SpawnParams
+			);
+		if (Projectile)
+		{
+			Projectile->Launch();
+			Reload();
+		}
+	}
+}
+
+void UTankAimingComponent::SetReloadedAndFiringState()
+{
+	IsReloaded = true;
+	FiringState = EFiringState::Reloaded;
 }
 
 // Called when the game starts
 void UTankAimingComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	MyOwnerTank = Cast<ATank>(GetOwner());
+}
+
+void UTankAimingComponent::Reload()
+{
+	IsReloaded = false;
+	FTimerHandle ReloadTimerHandle;
+	FiringState = EFiringState::Reloading;
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &UTankAimingComponent::SetReloadedAndFiringState, ReloadTimeInSeconds, false, ReloadTimeInSeconds);
 }
 
 void UTankAimingComponent::Initialize(UTankBarrelComponent * BarrelRef, UTankTurretComponent * TurretRef)
@@ -38,8 +69,6 @@ void UTankAimingComponent::Initialize(UTankBarrelComponent * BarrelRef, UTankTur
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
 void UTankAimingComponent::AimAt(FVector Location, float LaunchSpeed)
@@ -73,17 +102,15 @@ void UTankAimingComponent::AimAt(FVector Location, float LaunchSpeed)
 		FVector AimDirection = AimRotaton.Vector();
 		MoveBarrel(AimDirection);
 	}
-	
 }
 
 void UTankAimingComponent::MoveBarrel(FVector ShotDirection)
 {
-	if (MyOwnerTank)
+	if (ensure(Barrel && Turret))
 	{
 		FRotator ShotDirectionRot = ShotDirection.Rotation();
 		FRotator BarrelRot = Barrel->GetForwardVector().Rotation();
 		FRotator DeltaRotator = ShotDirectionRot - BarrelRot;
-		MyOwnerTank->AimBarrel.Broadcast(DeltaRotator);
 		if (Barrel && Turret)
 		{
 			Barrel->Elevate(DeltaRotator.Pitch);

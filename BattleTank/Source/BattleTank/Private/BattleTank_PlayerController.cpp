@@ -10,6 +10,8 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 #include "BattleTank.h"
+#include "Projectile.h"
+#include "TankAimingComponent.h"
 
 static int32 DebugAimingDrawing = 0;
 FAutoConsoleVariableRef CVARDebugAimingDrawing(
@@ -29,6 +31,14 @@ void ABattleTank_PlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	ControlledTank = Cast<ATank>(GetPawn());
+	if (ControlledTank)
+	{
+		TankAimingComponent = ControlledTank->GetTankAimingComponent();
+		if (ensure(ControlledTank->DefaultProjectile))
+		{
+			ProjectileSpeed = ControlledTank->DefaultProjectile->GetDefaultObject<AProjectile>()->LaunchSpeed; //This how you access variables from a TSubclassOf
+		}
+	}
 }
 
 void ABattleTank_PlayerController::Tick(float DeltaTime)
@@ -71,7 +81,7 @@ void ABattleTank_PlayerController::GetAimLocation()
 	// To find the beginning and direction of the trace
 	DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, CameraLocation, ShotDirection);
 
-	if (ControlledTank)
+	if (ControlledTank && TankAimingComponent)
 	{
 		TraceEnd = CameraLocation + (ShotDirection * AimRange);
 		TracerEnd = TraceEnd;
@@ -85,13 +95,24 @@ void ABattleTank_PlayerController::GetAimLocation()
 			{
 				DrawDebugSphere(GetWorld(), HitResult.Location, 100.0f, 12, FColor::Red, false, 0.5f, 0, 3.0f);
 			}
-			ControlledTank->AimAt(HitResult.Location);
+			TankAimingComponent->AimAt(HitResult.Location, ProjectileSpeed);
 		}
 		else
 		{
-			ControlledTank->AimAt(TraceEnd);
+			TankAimingComponent->AimAt(TraceEnd, ProjectileSpeed);
 		}		
 	}
+}
+
+void ABattleTank_PlayerController::Fire()
+{
+	TankAimingComponent->Fire(ControlledTank->DefaultProjectile);
+}
+
+void ABattleTank_PlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+	InputComponent->BindAction("Fire", IE_Pressed, this, &ABattleTank_PlayerController::Fire);
 }
 	
 

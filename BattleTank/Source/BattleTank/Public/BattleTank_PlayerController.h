@@ -9,6 +9,7 @@
 
 
 class ATank;
+class UTankAimingComponent;
 /**
  * 
  */
@@ -35,16 +36,22 @@ UPROPERTY(EditDefaultsOnly)
 float CrosshairYLocation;
 
 private:
+	
 	ABattleTank_PlayerController();
 	ATank* ControlledTank;
 	virtual void Tick(float DeltaTime) override;
+	float ProjectileSpeed;
 
 protected:
 // Called when the game starts or when spawned
 	void BeginPlay() override;
 	void GetAimLocation();
+	void Fire();
 	
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE ATank* GetControlledTank() const { if (ControlledTank) return ControlledTank; else return nullptr; }
+
+	UTankAimingComponent* TankAimingComponent;
 	
+	virtual void SetupInputComponent();
 };
