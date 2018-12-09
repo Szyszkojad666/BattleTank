@@ -17,6 +17,7 @@ class UTankAimingComponent;
 class UTankBarrelComponent;
 class UTankTurretComponent;
 class UTankMovementComponent;
+class UTankTrackComponent;
 class AProjectile;
 
 UCLASS()
@@ -28,18 +29,28 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTankAimingComponent* TankAimingComponent;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTankMovementComponent* TankMovementComp;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UTankBarrelComponent* Barrel;
-
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UTankTurretComponent* TurretComp;
 
-	
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UTankTrackComponent* TrackR;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UTankTrackComponent* TrackL;
+
+	void InitializeAimingComponentVariables();
+
+	void InitializeMovementComponentVariables();
+
 public:	
 
 	//Max force on track in newtons
@@ -66,9 +77,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ReloadTimeInSeconds;
-
-	UFUNCTION(BlueprintCallable)
-		void InitializeAimingComponentVariables(UTankBarrelComponent* BarrelRef, UTankTurretComponent* TurretRef);
 
 	UFUNCTION(BlueprintCallable)
 		FORCEINLINE UTankTurretComponent* GetTurret() { if (TurretComp) return TurretComp; else return nullptr; }

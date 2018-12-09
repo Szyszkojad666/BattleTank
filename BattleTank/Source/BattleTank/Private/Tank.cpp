@@ -8,6 +8,8 @@
 #include "Classes/Components/BoxComponent.h"
 #include "TankAimingComponent.h"
 #include "TankBarrelComponent.h"
+#include "TankTurretComponent.h"
+#include "TankTrackComponent.h"
 #include "Runtime/Engine/Classes/Components/InputComponent.h"
 #include "Projectile.h"
 #include "Classes/Engine/World.h"
@@ -25,6 +27,10 @@ ATank::ATank()
 	SM_Body = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SM_Body"));
 	TankMovementComp = CreateDefaultSubobject<UTankMovementComponent>(TEXT("TankMovementComponent"));
 	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(TEXT("TankAimingComponent"));
+	TurretComp = CreateDefaultSubobject<UTankTurretComponent>(TEXT("Turret"));
+	Barrel = CreateDefaultSubobject<UTankBarrelComponent>(TEXT("Barrel"));
+	TrackR = CreateDefaultSubobject<UTankTrackComponent>(TEXT("TrackR"));
+	TrackL = CreateDefaultSubobject<UTankTrackComponent>(TEXT("TrackL"));
 	//BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	//BoxCollision->SetupAttachment(RootComponent);
 	//BoxCollision->SetBoxExtent(FVector(400, 400, 100));
@@ -39,13 +45,19 @@ ATank::ATank()
 	ReloadTimeInSeconds = 2.0f;
 }
 
-void ATank::InitializeAimingComponentVariables(UTankBarrelComponent * BarrelRef, UTankTurretComponent * TurretRef)
+void ATank::InitializeAimingComponentVariables()
 {
-	if (ensure(BarrelRef && TurretRef))
+	if (ensure(Barrel && TurretComp))
 	{
-		TankAimingComponent->Initialize(BarrelRef, TurretRef);
-		Barrel = BarrelRef;
-		TurretComp = TurretRef;
+		TankAimingComponent->Initialize(Barrel, TurretComp);
+	}
+}
+
+void ATank::InitializeMovementComponentVariables()
+{
+	if (ensure(TrackR && TrackL))
+	{
+		TankMovementComp->Initialise(TrackL, TrackR);
 	}
 }
 
@@ -53,6 +65,8 @@ void ATank::InitializeAimingComponentVariables(UTankBarrelComponent * BarrelRef,
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
+	InitializeAimingComponentVariables();
+	InitializeMovementComponentVariables();
 }
 
 

@@ -17,7 +17,7 @@ class UTankBarrelComponent;
 class UTankTurretComponent;
 class AProjectile;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
 class BATTLETANK_API UTankAimingComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -25,7 +25,13 @@ class BATTLETANK_API UTankAimingComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UPROPERTY(BlueprintReadOnly)
-		EFiringState FiringState = EFiringState::Reloaded;
+	EFiringState FiringState = EFiringState::Reloaded;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+		float TurretRotationSpeed = 20;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+		float BarrelElevationSpeed = 20;
 	
 	UTankAimingComponent();
 
@@ -38,10 +44,8 @@ public:
 
 	void Fire(TSubclassOf<AProjectile> ProjectileClass);
 
-	
-
 protected:
-	// Called when the game starts
+	
 	UTankBarrelComponent* Barrel;
 	UTankTurretComponent* Turret;
 	bool IsReloaded = true;
@@ -55,7 +59,4 @@ private:
 	
 	void MoveBarrel(FVector ShotDirection);
 	void SetReloadedAndFiringState();
-	
-	
-	
 };

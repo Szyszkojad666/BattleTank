@@ -4,10 +4,10 @@
 #include "Engine/World.h"
 
 
-void UTankTurretComponent::Rotate(float RelativeSpeed)
+void UTankTurretComponent::Rotate(float RelativeSpeed, float MaxRotationSpeed)
 {
 	RelativeSpeed = FMath::Clamp<float>(RelativeSpeed, -1, +1);
-	auto RotationChange = RelativeSpeed * MaxDegreesPerSecond * GetWorld()->DeltaTimeSeconds;
+	auto RotationChange = RelativeSpeed * MaxRotationSpeed * GetWorld()->DeltaTimeSeconds;
 	auto RawNewRotation = RelativeRotation.Yaw + RotationChange;
 	SetRelativeRotation(FRotator(0, RawNewRotation, 0));
 	//UE_LOG(LogTemp, Warning, TEXT("Rotation is: %f"), RawNewRotation);

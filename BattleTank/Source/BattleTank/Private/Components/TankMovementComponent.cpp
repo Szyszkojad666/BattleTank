@@ -2,7 +2,6 @@
 
 #include "TankMovementComponent.h"
 #include "TankTrackComponent.h"
-#include "Tank.h"
 
 void UTankMovementComponent::Initialise(UTankTrackComponent* LeftTrackToSet, UTankTrackComponent* RightTrackToSet)
 {
@@ -12,27 +11,27 @@ void UTankMovementComponent::Initialise(UTankTrackComponent* LeftTrackToSet, UTa
 
 void UTankMovementComponent::MoveForward(float Throw)
 {
-	if (LeftTrack && RightTrack && OwnerTank)
+	if (ensure(LeftTrack && RightTrack))
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("It's working: %f"), Throw);
-		LeftTrack->SetThrottle(Throw, OwnerTank->TrackMaxDrivingForce);
-		RightTrack->SetThrottle(Throw, OwnerTank->TrackMaxDrivingForce);
+		LeftTrack->SetThrottle(Throw, MaxDrivingForce);
+		RightTrack->SetThrottle(Throw, MaxDrivingForce);
 	}
 }
 
 void UTankMovementComponent::TurnRight(float Throw)
 {
-	if (LeftTrack && RightTrack && OwnerTank)
+	if (ensure(LeftTrack && RightTrack))
 	{
 		if (Throw > 0.0)
 		{
-			RightTrack->SetThrottle(-Throw, OwnerTank->TrackMaxDrivingForce);
-			LeftTrack->SetThrottle(Throw, OwnerTank->TrackMaxDrivingForce);
+			RightTrack->SetThrottle(-Throw, MaxDrivingForce);
+			LeftTrack->SetThrottle(Throw, MaxDrivingForce);
 		}
 		if (Throw < 0.0)
 		{
-			RightTrack->SetThrottle(-Throw, OwnerTank->TrackMaxDrivingForce);
-			LeftTrack->SetThrottle(Throw, OwnerTank->TrackMaxDrivingForce);
+			RightTrack->SetThrottle(-Throw, MaxDrivingForce);
+			LeftTrack->SetThrottle(Throw, MaxDrivingForce);
 		}
 	}
 }
@@ -50,5 +49,4 @@ void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool
 void UTankMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	OwnerTank = Cast<ATank>(GetOwner());
 }

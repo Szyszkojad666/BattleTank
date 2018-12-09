@@ -8,24 +8,26 @@
 
 
 class UTankTrackComponent;
-class ATank;
 /**
  * 
  */
-UCLASS(ClassGroup = (TankMovement), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (TankMovement), meta = (BlueprintSpawnableComponent), BlueprintType)
 class BATTLETANK_API UTankMovementComponent : public UNavMovementComponent
 {
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable, Category = Setup)
-		void Initialise(UTankTrackComponent* LeftTrackToSet, UTankTrackComponent* RightTrackToSet);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float MaxDrivingForce = 40000000.0f;
+	
+	void Initialise(UTankTrackComponent* LeftTrackToSet, UTankTrackComponent* RightTrackToSet);
 	
 	UFUNCTION(BlueprintCallable)
-		void MoveForward(float Throw);
+	void MoveForward(float Throw);
 
 	UFUNCTION(BlueprintCallable)
-		void TurnRight(float Throw);
+	void TurnRight(float Throw);
 
 	virtual void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
 	
@@ -37,5 +39,4 @@ private:
 protected:
 	virtual void BeginPlay() override;
 
-	ATank* OwnerTank = nullptr;
 };
