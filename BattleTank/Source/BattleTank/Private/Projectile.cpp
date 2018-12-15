@@ -15,7 +15,6 @@ AProjectile::AProjectile()
 	ProjectileMovementComp->bAutoActivate = false;
 	ProjectileMesh->SetupAttachment(RootComponent);
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere"));
-
 }
 
 // Called when the game starts or when spawned

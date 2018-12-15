@@ -38,6 +38,8 @@ ATank::ATank()
 	SM_Body->SetSimulatePhysics(true);
 	SM_Body->SetMassOverrideInKg(NAME_None, 40000.0f);
 	SM_Body->SetEnableGravity(true);
+	SM_Body->SetLinearDamping(0.5);
+	SM_Body->SetAngularDamping(0.8);
 	Gimbal->SetupAttachment(SM_Body);
 	SpringArm->SetupAttachment(Gimbal);
 	SpringArm->bUsePawnControlRotation = false;

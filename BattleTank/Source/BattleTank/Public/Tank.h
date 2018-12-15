@@ -18,7 +18,6 @@ class UTankBarrelComponent;
 class UTankTurretComponent;
 class UTankMovementComponent;
 class UTankTrackComponent;
-class AProjectile;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -60,9 +59,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		UCameraComponent* Camera;
 	
-	UPROPERTY(EditDefaultsOnly)
-		TSubclassOf<AProjectile> DefaultProjectile;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		USpringArmComponent* SpringArm;
 

@@ -31,7 +31,6 @@ private:
 	
 	ATank* ControlledTank;
 	ATank* PlayerTank;
-	float ProjectileSpeed;
 
 	void BeginPlay() override;
 	void Fire();

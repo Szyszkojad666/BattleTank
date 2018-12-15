@@ -7,7 +7,7 @@
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "TankMovementComponent.h"
 #include "TankAimingComponent.h"
-#include "Projectile.h"
+
 
 
 
@@ -29,7 +29,7 @@ void ABattleTank_AIController::Fire()
 {
 	if (ControlledTank)
 	{
-		TankAimingComp->Fire(ControlledTank->DefaultProjectile);
+		TankAimingComp->Fire();
 	}
 }
 
@@ -42,14 +42,6 @@ ATank* ABattleTank_AIController:: GetPlayerTank()
 	}
 	else
 		return PlayerTank;
-	if (ControlledTank)
-	{
-		AProjectile* TankProjectile = Cast<AProjectile>(ControlledTank->DefaultProjectile);
-		if (ensure(TankProjectile))
-		{
-			ProjectileSpeed = TankProjectile->LaunchSpeed;
-		}
-	}
 }
 
 void ABattleTank_AIController::Tick(float DeltaTime)
@@ -59,7 +51,6 @@ void ABattleTank_AIController::Tick(float DeltaTime)
 	{
 		//MoveToActor(PlayerTank, 300.0f);
 	}
-	
 }
 
 void ABattleTank_AIController::AimTowardsCrosshair()
@@ -67,7 +58,7 @@ void ABattleTank_AIController::AimTowardsCrosshair()
 	if (ControlledTank && PlayerTank)
 	{
 		FVector AimLocation = PlayerTank->GetActorLocation();
-		ControlledTank->GetTankAimingComponent()->AimAt(AimLocation, ProjectileSpeed);
+		ControlledTank->GetTankAimingComponent()->AimAt(AimLocation);
 	}
 }
 
@@ -80,7 +71,6 @@ FPathFollowingRequestResult ABattleTank_AIController::MoveTo(const FAIMoveReques
 	{
 		TankMovementComp->RequestDirectMove(Velocity, false);
 	}
-	
 	return FPathFollowingRequestResult();
 }
 

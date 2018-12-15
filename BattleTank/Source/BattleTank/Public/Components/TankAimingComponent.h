@@ -32,6 +32,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		float BarrelElevationSpeed = 20;
+
+	UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<AProjectile> DefaultProjectileClass;
 	
 	UTankAimingComponent();
 
@@ -40,23 +43,23 @@ public:
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void AimAt(FVector Location, float LaunchSpeed);
+	void AimAt(FVector Location);
 
-	void Fire(TSubclassOf<AProjectile> ProjectileClass);
+	void Fire();
 
+
+	
 protected:
 	
 	UTankBarrelComponent* Barrel;
 	UTankTurretComponent* Turret;
 	bool IsReloaded = true;
-
 	virtual void BeginPlay() override;
 	void Reload();
-	
+
 private: 
 	
 	float ReloadTimeInSeconds = 1.0f;
-	
 	void MoveBarrel(FVector ShotDirection);
 	void SetReloadedAndFiringState();
 };

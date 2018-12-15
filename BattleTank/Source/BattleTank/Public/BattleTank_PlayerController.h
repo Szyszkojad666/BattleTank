@@ -40,7 +40,6 @@ private:
 	ABattleTank_PlayerController();
 	ATank* ControlledTank;
 	virtual void Tick(float DeltaTime) override;
-	float ProjectileSpeed;
 
 protected:
 // Called when the game starts or when spawned

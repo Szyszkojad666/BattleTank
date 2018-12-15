@@ -10,7 +10,6 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 #include "BattleTank.h"
-#include "Projectile.h"
 #include "TankAimingComponent.h"
 
 static int32 DebugAimingDrawing = 0;
@@ -31,13 +30,9 @@ void ABattleTank_PlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	ControlledTank = Cast<ATank>(GetPawn());
-	if (ControlledTank)
+	if (ensure(ControlledTank))
 	{
 		TankAimingComponent = ControlledTank->GetTankAimingComponent();
-		if (ensure(ControlledTank->DefaultProjectile))
-		{
-			ProjectileSpeed = ControlledTank->DefaultProjectile->GetDefaultObject<AProjectile>()->LaunchSpeed; //This how you access variables from a TSubclassOf
-		}
 	}
 }
 
@@ -95,18 +90,19 @@ void ABattleTank_PlayerController::GetAimLocation()
 			{
 				DrawDebugSphere(GetWorld(), HitResult.Location, 100.0f, 12, FColor::Red, false, 0.5f, 0, 3.0f);
 			}
-			TankAimingComponent->AimAt(HitResult.Location, ProjectileSpeed);
+			TankAimingComponent->AimAt(HitResult.Location);
 		}
 		else
 		{
-			TankAimingComponent->AimAt(TraceEnd, ProjectileSpeed);
+			TankAimingComponent->AimAt(TraceEnd);
 		}		
 	}
 }
 
 void ABattleTank_PlayerController::Fire()
 {
-	TankAimingComponent->Fire(ControlledTank->DefaultProjectile);
+	if (!ensure(TankAimingComponent)) { return; }
+	TankAimingComponent->Fire();
 }
 
 void ABattleTank_PlayerController::SetupInputComponent()

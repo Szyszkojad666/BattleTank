@@ -16,14 +16,15 @@ UTankAimingComponent::UTankAimingComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UTankAimingComponent::Fire(TSubclassOf<AProjectile> ProjectileClass)
+void UTankAimingComponent::Fire()
 {
-	if (ensure(!Barrel)) { return; }
-	if (IsReloaded)
+	if (FiringState == EFiringState::Reloaded)
 	{
+		if (!ensure(Barrel)) { return; }
+		if (!ensure(DefaultProjectileClass)) { return; }
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass,
+		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(DefaultProjectileClass,
 			Barrel->GetSocketLocation("S_Muzzle"),
 			Barrel->GetSocketRotation("S_Muzzle"),
 			SpawnParams
@@ -38,7 +39,6 @@ void UTankAimingComponent::Fire(TSubclassOf<AProjectile> ProjectileClass)
 
 void UTankAimingComponent::SetReloadedAndFiringState()
 {
-	IsReloaded = true;
 	FiringState = EFiringState::Reloaded;
 }
 
@@ -50,7 +50,6 @@ void UTankAimingComponent::BeginPlay()
 
 void UTankAimingComponent::Reload()
 {
-	IsReloaded = false;
 	FTimerHandle ReloadTimerHandle;
 	FiringState = EFiringState::Reloading;
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &UTankAimingComponent::SetReloadedAndFiringState, ReloadTimeInSeconds, false, ReloadTimeInSeconds);
@@ -71,11 +70,12 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UTankAimingComponent::AimAt(FVector Location, float LaunchSpeed)
+void UTankAimingComponent::AimAt(FVector Location)
 {
-	if (!Barrel) { return; }
+	if (ensure(Barrel || DefaultProjectileClass)) { return; }
 	FVector OutLaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation("S_Muzzle");
+	float LaunchSpeed = DefaultProjectileClass->GetDefaultObject<AProjectile>()->LaunchSpeed;
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(GetOwner());
 	bool HaveAimSolution = UGameplayStatics::SuggestProjectileVelocity
