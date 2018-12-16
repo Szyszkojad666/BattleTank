@@ -1,49 +1,61 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankTrackComponent.h"
+#include "Runtime/Engine/Classes/Engine/World.h"
 
 UTankTrackComponent::UTankTrackComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
+	this->OnComponentHit.AddDynamic(this, &UTankTrackComponent::OnCompHit);
+	SetNotifyRigidBodyCollision(true);
 }
 
-void UTankTrackComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	ApplyCorrection(DeltaTime);
-}
 
 float UTankTrackComponent::CalculateSlippageSpeed()
 {
 	auto SideVelocity = FVector::DotProduct(GetRightVector(), GetComponentVelocity());
-	UE_LOG(LogTemp, Warning, TEXT("Tank's sideways velocity is: %f "), SideVelocity);
 	return SideVelocity;
 }
 
-FVector UTankTrackComponent::CalculateCorrection(float DeltaTime)
+FVector UTankTrackComponent::CalculateCorrection()
 {
+	auto DeltaTime = GetWorld()->GetDeltaSeconds();
 	auto Correction = -CalculateSlippageSpeed() / DeltaTime * GetRightVector();
 	return Correction;
 }
 
-void UTankTrackComponent::ApplyCorrection(float DeltaTime)
+void UTankTrackComponent::ApplySideMovementCorrection()
 {
 	if (!ensure(OwnerRoot)) { return; }
-	auto CorrectionForce = OwnerRoot->GetMass() * CalculateCorrection(DeltaTime) / 2;
+	auto DeltaTime = GetWorld()->GetDeltaSeconds();
+	auto CorrectionForce = OwnerRoot->GetMass() * CalculateCorrection() / 2;
 	OwnerRoot->AddForce(CorrectionForce);
 }
 
 void UTankTrackComponent::BeginPlay()
 {
+	Super::BeginPlay();
 	OwnerRoot = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
 }
 
-void UTankTrackComponent::SetThrottle(float Throttle, float MaxForce)
+void UTankTrackComponent::SetThrottle(float Throttle)
 {
-	FVector Force = GetForwardVector() * Throttle * MaxForce;
-	FVector ForceLocation = GetComponentLocation();
-	auto TankRoot =Cast<UPrimitiveComponent>( GetOwner()->GetRootComponent());
-	TankRoot->AddForceAtLocation(Force, ForceLocation);
+	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, 1);
 }
 
+void UTankTrackComponent::DriveTrack()
+{
+	FVector Force = GetForwardVector() * CurrentThrottle * TankMaxDrivingForce;
+	FVector ForceLocation = GetComponentLocation();
+	if (OwnerRoot)
+	OwnerRoot->AddForceAtLocation(Force, ForceLocation);
+	FString TrackName = GetName();
+	UE_LOG(LogTemp, Warning, TEXT("%s's current throttle is: %f: "), *TrackName, CurrentThrottle);
+}
 
+void UTankTrackComponent::OnCompHit(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
+{
+	DriveTrack();
+	ApplySideMovementCorrection();
+	CurrentThrottle = 0;
+}

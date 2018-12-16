@@ -16,17 +16,27 @@ class BATTLETANK_API UTankTrackComponent : public UStaticMeshComponent
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = Input)
-		void SetThrottle(float Throttle, float MaxForce);
+		void SetThrottle(float Throttle);
+
+	UFUNCTION()
+		void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	float TankMaxDrivingForce;
+
+	FORCEINLINE UFUNCTION()
+	void SetTrackDrivingForce(float InDrivingForce) { TankMaxDrivingForce = InDrivingForce; }
 
 private:
-	
+
 	UTankTrackComponent();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
 	float CalculateSlippageSpeed();
-	FVector CalculateCorrection(float DeltaTime);
-	void ApplyCorrection(float DeltaTime);
+	FVector CalculateCorrection();
+	void ApplySideMovementCorrection();
+	void DriveTrack();
 	UStaticMeshComponent* OwnerRoot;
 	virtual void BeginPlay() override;
+	float CurrentThrottle = 0;
+
 };

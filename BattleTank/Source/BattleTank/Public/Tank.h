@@ -51,6 +51,16 @@ protected:
 	void InitializeMovementComponentVariables();
 
 public:	
+	// Getter functions
+
+	UFUNCTION(BlueprintCallable)
+		FORCEINLINE UTankTurretComponent* GetTurret() { if (TurretComp) return TurretComp; else return nullptr; }
+
+	UFUNCTION(BlueprintCallable)
+		FORCEINLINE UTankMovementComponent* GetTankMovementComponent() { return TankMovementComp; }
+
+	UFUNCTION(BlueprintCallable)
+		FORCEINLINE UTankAimingComponent* GetTankAimingComponent() { return TankAimingComponent; }
 
 	//Max force on track in newtons
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -74,14 +84,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ReloadTimeInSeconds;
 
-	UFUNCTION(BlueprintCallable)
-		FORCEINLINE UTankTurretComponent* GetTurret() { if (TurretComp) return TurretComp; else return nullptr; }
-
-	UFUNCTION(BlueprintCallable)
-		FORCEINLINE UTankMovementComponent* GetTankMovementComponent() { return TankMovementComp; }
-
-	UFUNCTION(BlueprintCallable)
-		FORCEINLINE UTankAimingComponent* GetTankAimingComponent() { return TankAimingComponent; }
 private:
 	ATank();
 };

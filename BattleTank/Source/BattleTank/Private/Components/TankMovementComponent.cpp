@@ -7,31 +7,34 @@ void UTankMovementComponent::Initialise(UTankTrackComponent* LeftTrackToSet, UTa
 {
 	LeftTrack = LeftTrackToSet;
 	RightTrack = RightTrackToSet;
+	if (LeftTrack && RightTrack)
+	{
+		LeftTrack->SetTrackDrivingForce(MaxDrivingForce);
+		RightTrack->SetTrackDrivingForce(MaxDrivingForce);
+	}
 }
 
+//TODO: Find a way to handle input in two directions at the same time without constantly overwriting throw values in two methods 
 void UTankMovementComponent::MoveForward(float Throw)
 {
-	if (ensure(LeftTrack && RightTrack))
+	if (Throw != 0.0f)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("It's working: %f"), Throw);
-		LeftTrack->SetThrottle(Throw, MaxDrivingForce);
-		RightTrack->SetThrottle(Throw, MaxDrivingForce);
+		if (ensure(LeftTrack && RightTrack))
+		{
+			LeftTrack->SetThrottle(Throw);
+			RightTrack->SetThrottle(Throw);
+		}
 	}
 }
 
 void UTankMovementComponent::TurnRight(float Throw)
 {
-	if (ensure(LeftTrack && RightTrack))
+	if (Throw != 0.0f)
 	{
-		if (Throw > 0.0)
+		if (ensure(LeftTrack && RightTrack))
 		{
-			RightTrack->SetThrottle(-Throw, MaxDrivingForce);
-			LeftTrack->SetThrottle(Throw, MaxDrivingForce);
-		}
-		if (Throw < 0.0)
-		{
-			RightTrack->SetThrottle(-Throw, MaxDrivingForce);
-			LeftTrack->SetThrottle(Throw, MaxDrivingForce);
+			RightTrack->SetThrottle(-Throw);
+			LeftTrack->SetThrottle(Throw);
 		}
 	}
 }
