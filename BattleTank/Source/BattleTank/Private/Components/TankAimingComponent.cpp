@@ -16,9 +16,32 @@ UTankAimingComponent::UTankAimingComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void UTankAimingComponent::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void UTankAimingComponent::Initialize(UTankBarrelComponent * BarrelRef, UTankTurretComponent * TurretRef)
+{
+	if (BarrelRef && TurretRef)
+	{
+		Barrel = BarrelRef;
+		Turret = TurretRef;
+	}
+}
+
+// Called every frame
+void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (FiringState != EFiringState::Reloading)
+	{
+		IsAiming();
+	}
+}
 void UTankAimingComponent::Fire()
 {
-	if (FiringState == EFiringState::Reloaded)
+	if (FiringState != EFiringState::Reloading)
 	{
 		if (!ensure(Barrel)) { return; }
 		if (!ensure(DefaultProjectileClass)) { return; }
@@ -42,12 +65,6 @@ void UTankAimingComponent::SetReloadedAndFiringState()
 	FiringState = EFiringState::Reloaded;
 }
 
-// Called when the game starts
-void UTankAimingComponent::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 void UTankAimingComponent::Reload()
 {
 	FTimerHandle ReloadTimerHandle;
@@ -55,24 +72,27 @@ void UTankAimingComponent::Reload()
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &UTankAimingComponent::SetReloadedAndFiringState, ReloadTimeInSeconds, false, ReloadTimeInSeconds);
 }
 
-void UTankAimingComponent::Initialize(UTankBarrelComponent * BarrelRef, UTankTurretComponent * TurretRef)
+void UTankAimingComponent::IsAiming()
 {
-	if (BarrelRef && TurretRef)
+	if (Barrel)
 	{
-		Barrel = BarrelRef;
-		Turret = TurretRef;
+		FVector Subtraction = AimDirection - Barrel->GetForwardVector();
+		//UE_LOG(LogTemp, Warning, TEXT("Subtraction is %s: "), *Subtraction.ToString());
+		 if (AimDirection.Equals(Barrel->GetForwardVector(), 0.01f))
+		 {
+			 FiringState = EFiringState::Locked;
+		 }
+		 else 
+		 {
+			 FiringState = EFiringState::Aiming;
+		 }
 	}	
-}
-
-// Called every frame
-void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
 void UTankAimingComponent::AimAt(FVector Location)
 {
-	if (ensure(Barrel || DefaultProjectileClass)) { return; }
+	if (!ensure(Barrel)) { return; }
+	if (!ensure(DefaultProjectileClass)) { return; }
 	FVector OutLaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation("S_Muzzle");
 	float LaunchSpeed = DefaultProjectileClass->GetDefaultObject<AProjectile>()->LaunchSpeed;
@@ -90,10 +110,9 @@ void UTankAimingComponent::AimAt(FVector Location)
 		0,
 		ESuggestProjVelocityTraceOption::DoNotTrace
 	);
-
 	if (HaveAimSolution)
 	{
-		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
+		AimDirection = OutLaunchVelocity.GetSafeNormal();
 		MoveBarrel(AimDirection);
 	}
 	else

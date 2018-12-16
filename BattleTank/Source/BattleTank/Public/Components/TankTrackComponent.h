@@ -18,8 +18,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Input)
 		void SetThrottle(float Throttle, float MaxForce);
 
+private:
 	
-	
-	
-	
+	UTankTrackComponent();
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+protected:
+	float CalculateSlippageSpeed();
+	FVector CalculateCorrection(float DeltaTime);
+	void ApplyCorrection(float DeltaTime);
+	UStaticMeshComponent* OwnerRoot;
+	virtual void BeginPlay() override;
 };

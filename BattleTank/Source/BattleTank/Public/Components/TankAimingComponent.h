@@ -10,7 +10,9 @@ UENUM()
 enum class EFiringState : uint8
 {
 	Reloading,
-	Reloaded
+	Reloaded,
+	Aiming,
+	Locked
 };
 
 class UTankBarrelComponent;
@@ -51,11 +53,13 @@ public:
 	
 protected:
 	
+	FVector AimDirection;
 	UTankBarrelComponent* Barrel;
 	UTankTurretComponent* Turret;
 	bool IsReloaded = true;
 	virtual void BeginPlay() override;
 	void Reload();
+	void IsAiming();
 
 private: 
 	
