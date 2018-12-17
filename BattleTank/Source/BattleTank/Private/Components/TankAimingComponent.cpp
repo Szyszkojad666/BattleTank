@@ -39,6 +39,7 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 		IsAiming();
 	}
 }
+
 void UTankAimingComponent::Fire()
 {
 	if (FiringState != EFiringState::Reloading)

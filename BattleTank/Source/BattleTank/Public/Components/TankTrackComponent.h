@@ -15,11 +15,12 @@ class BATTLETANK_API UTankTrackComponent : public UStaticMeshComponent
 	GENERATED_BODY()
 	
 public:
+	
 	UFUNCTION(BlueprintCallable, Category = Input)
-		void SetThrottle(float Throttle);
+	void SetThrottle(float Throttle);
 
 	UFUNCTION()
-		void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	float TankMaxDrivingForce;
 

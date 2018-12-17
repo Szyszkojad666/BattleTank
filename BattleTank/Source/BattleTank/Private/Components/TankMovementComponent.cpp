@@ -47,6 +47,7 @@ void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool
 	MoveForward(FVector::DotProduct(NormalizedMoveVelocity, TankForwardVector)); // Get the parallelness of these two vectors, maximum when vectors are parallel and zero when they are perpendicular
 	// UE_LOG(LogTemp, Warning, TEXT("Move velocity is: %s"), *MoveVelocityString);
 	TurnRight(FVector::CrossProduct(TankForwardVector, NormalizedMoveVelocity).Z); // Get the perpendicularity of these two vectors, maximum when vectors are perpendicular and zero when they are parallel
+	//UE_LOG(LogTemp, Warning, TEXT("TurnRight move velocity: %f"), FVector::CrossProduct(TankForwardVector, NormalizedMoveVelocity).Z);
 }
 
 void UTankMovementComponent::BeginPlay()

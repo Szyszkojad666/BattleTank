@@ -50,7 +50,7 @@ void UTankTrackComponent::DriveTrack()
 	if (OwnerRoot)
 	OwnerRoot->AddForceAtLocation(Force, ForceLocation);
 	FString TrackName = GetName();
-	UE_LOG(LogTemp, Warning, TEXT("%s's current throttle is: %f: "), *TrackName, CurrentThrottle);
+	//UE_LOG(LogTemp, Warning, TEXT("%s's current throttle is: %f: "), *TrackName, CurrentThrottle);
 }
 
 void UTankTrackComponent::OnCompHit(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)

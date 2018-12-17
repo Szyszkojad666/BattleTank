@@ -8,16 +8,13 @@
 #include "TankMovementComponent.h"
 #include "TankAimingComponent.h"
 
-
-
-
 void ABattleTank_AIController::BeginPlay()
 {
 	Super::BeginPlay();
 	ControlledTank = Cast<ATank>(GetPawn());
 	GetPlayerTank();
 	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABattleTank_AIController::Fire, 2.0f, true, 3.0f);
+	// GetWorldTimerManager().SetTimer(TimerHandle, this, &ABattleTank_AIController::Fire, 2.0f, true, 3.0f);
 	if (ControlledTank)
 	{
 		TankMovementComp = ControlledTank->GetTankMovementComponent();
@@ -46,11 +43,7 @@ ATank* ABattleTank_AIController:: GetPlayerTank()
 
 void ABattleTank_AIController::Tick(float DeltaTime)
 {
-	AimTowardsCrosshair();
-	if (PlayerTank)
-	{
-		//MoveToActor(PlayerTank, 300.0f);
-	}
+	Super::Tick(DeltaTime);
 }
 
 void ABattleTank_AIController::AimTowardsCrosshair()

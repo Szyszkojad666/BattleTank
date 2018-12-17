@@ -30,27 +30,30 @@ public:
 	EFiringState FiringState = EFiringState::Reloaded;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		float TurretRotationSpeed = 20;
+	float TurretRotationSpeed = 20;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		float BarrelElevationSpeed = 20;
+	float BarrelElevationSpeed = 20;
 
 	UPROPERTY(EditDefaultsOnly)
-		TSubclassOf<AProjectile> DefaultProjectileClass;
+	TSubclassOf<AProjectile> DefaultProjectileClass;
 	
 	UTankAimingComponent();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void Initialize(UTankBarrelComponent* BarrelRef, UTankTurretComponent* TurretRef);
+
+	UFUNCTION(BlueprintCallable, Category = "Aiming")
+	void Fire();
+
+	UFUNCTION(BlueprintCallable, Category = "Aiming")
+	void AimAt(FVector Location);
+
+	UFUNCTION(BlueprintPure, Category = "Aiming")
+	FORCEINLINE EFiringState GetFiringState() const { return FiringState; }
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void AimAt(FVector Location);
-
-	void Fire();
-
-
-	
 protected:
 	
 	FVector AimDirection;

@@ -19,6 +19,9 @@ class BATTLETANK_API ABattleTank_AIController : public AAIController
 	
 public:
 	
+	UFUNCTION(BlueprintPure, Category = "Aiming")
+	FORCEINLINE UTankAimingComponent* GetTankAimingComponent() const { return TankAimingComp; }
+
 	ATank* GetPlayerTank();
 	virtual void Tick(float DeltaTime) override;
 	void AimTowardsCrosshair();
