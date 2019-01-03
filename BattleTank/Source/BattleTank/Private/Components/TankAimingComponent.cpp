@@ -42,7 +42,7 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UTankAimingComponent::Fire()
 {
-	if (FiringState != EFiringState::Reloading)
+	if (FiringState != EFiringState::Reloading && Ammo > 0)
 	{
 		if (!ensure(Barrel)) { return; }
 		if (!ensure(DefaultProjectileClass)) { return; }
@@ -56,6 +56,7 @@ void UTankAimingComponent::Fire()
 		if (Projectile)
 		{
 			Projectile->Launch();
+			Ammo--;
 			Reload();
 		}
 	}
@@ -68,14 +69,21 @@ void UTankAimingComponent::SetReloadedAndFiringState()
 
 void UTankAimingComponent::Reload()
 {
-	FTimerHandle ReloadTimerHandle;
-	FiringState = EFiringState::Reloading;
-	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &UTankAimingComponent::SetReloadedAndFiringState, ReloadTimeInSeconds, false, ReloadTimeInSeconds);
+	if (Ammo > 0)
+	{
+		FTimerHandle ReloadTimerHandle;
+		FiringState = EFiringState::Reloading;
+		GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &UTankAimingComponent::SetReloadedAndFiringState, ReloadTimeInSeconds, false, ReloadTimeInSeconds);
+	}
+	else
+	{
+		FiringState = EFiringState::OutOfAmmo;
+	}
 }
 
 void UTankAimingComponent::IsAiming()
 {
-	if (Barrel)
+	if (Barrel && FiringState != EFiringState::OutOfAmmo)
 	{
 		FVector Subtraction = AimDirection - Barrel->GetForwardVector();
 		//UE_LOG(LogTemp, Warning, TEXT("Subtraction is %s: "), *Subtraction.ToString());
@@ -134,7 +142,15 @@ void UTankAimingComponent::MoveBarrel(FVector ShotDirection)
 		if (Barrel && Turret)
 		{
 			Barrel->Elevate(DeltaRotator.Pitch, BarrelElevationSpeed);
-			Turret->Rotate(DeltaRotator.Yaw, TurretRotationSpeed);
+			// Always rotate the shortest way
+			if (FMath::Abs(DeltaRotator.Yaw) < 180)
+			{
+				Turret->Rotate(DeltaRotator.Yaw, TurretRotationSpeed);
+			}
+			else
+			{
+				Turret->Rotate(-DeltaRotator.Yaw, TurretRotationSpeed);
+			}
 		}
 	}
 }

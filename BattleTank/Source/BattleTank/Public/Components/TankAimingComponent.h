@@ -12,7 +12,8 @@ enum class EFiringState : uint8
 	Reloading,
 	Reloaded,
 	Aiming,
-	Locked
+	Locked,
+	OutOfAmmo
 };
 
 class UTankBarrelComponent;
@@ -38,6 +39,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AProjectile> DefaultProjectileClass;
 	
+	UPROPERTY(EditDefaultsOnly)
+	int Ammo = 10;
+	
 	UTankAimingComponent();
 
 	UFUNCTION(BlueprintCallable, Category = "Setup")
@@ -51,6 +55,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Aiming")
 	FORCEINLINE EFiringState GetFiringState() const { return FiringState; }
+
+	UFUNCTION(BlueprintPure, Category = "Aiming")
+	FORCEINLINE int GetAmmo() const { return Ammo; }
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
