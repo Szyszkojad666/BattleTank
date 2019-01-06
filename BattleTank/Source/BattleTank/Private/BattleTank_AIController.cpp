@@ -7,24 +7,25 @@
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "TankMovementComponent.h"
 #include "TankAimingComponent.h"
+#include "Classes/GameFramework/Pawn.h"
 
 void ABattleTank_AIController::BeginPlay()
 {
 	Super::BeginPlay();
-	ControlledTank = Cast<ATank>(GetPawn());
+	ControlledPawn = GetPawn();
 	GetPlayerTank();
 	FTimerHandle TimerHandle;
 	// GetWorldTimerManager().SetTimer(TimerHandle, this, &ABattleTank_AIController::Fire, 2.0f, true, 3.0f);
-	if (ControlledTank)
+	if (ControlledPawn)
 	{
-		TankMovementComp = ControlledTank->GetTankMovementComponent();
-		TankAimingComp = ControlledTank->GetTankAimingComponent();
+		TankMovementComp = Cast<UTankMovementComponent>(ControlledPawn->GetComponentByClass(UTankMovementComponent::StaticClass()));
+		TankAimingComp = Cast<UTankAimingComponent>(ControlledPawn->GetComponentByClass(UTankAimingComponent::StaticClass()));
 	}
 }
 
 void ABattleTank_AIController::Fire()
 {
-	if (ControlledTank)
+	if (ControlledPawn && TankAimingComp)
 	{
 		TankAimingComp->Fire();
 	}
@@ -48,10 +49,10 @@ void ABattleTank_AIController::Tick(float DeltaTime)
 
 void ABattleTank_AIController::AimTowardsCrosshair()
 {
-	if (ControlledTank && PlayerTank)
+	if (TankAimingComp && PlayerTank)
 	{
 		FVector AimLocation = PlayerTank->GetActorLocation();
-		ControlledTank->GetTankAimingComponent()->AimAt(AimLocation);
+		TankAimingComp->AimAt(AimLocation);
 	}
 }
 
@@ -59,7 +60,7 @@ FPathFollowingRequestResult ABattleTank_AIController::MoveTo(const FAIMoveReques
 {
 	Super::MoveTo(MoveRequest, OutPath);
 	FVector Destination = MoveRequest.GetDestination();
-	FVector Velocity = Destination - ControlledTank->GetActorLocation();
+	FVector Velocity = Destination - ControlledPawn->GetActorLocation();
 	if (TankMovementComp)
 	{
 		TankMovementComp->RequestDirectMove(Velocity, false);

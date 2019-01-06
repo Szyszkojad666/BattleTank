@@ -9,6 +9,7 @@
 class ATank;
 class UTankMovementComponent;
 class UTankAimingComponent;
+class APawn;
 /**
  * 
  */
@@ -32,7 +33,7 @@ private:
 	UTankMovementComponent* TankMovementComp;
 	UTankAimingComponent* TankAimingComp;
 	
-	ATank* ControlledTank;
+	APawn* ControlledPawn;
 	ATank* PlayerTank;
 
 	void BeginPlay() override;
