@@ -9,6 +9,7 @@
 class UStaticMeshComponent;
 class UProjectileMovementComponent;
 class USphereComponent;
+class UParticleSystem;
 
 UCLASS()
 class BATTLETANK_API AProjectile : public AActor
@@ -23,16 +24,17 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere)
-		UStaticMeshComponent* ProjectileMesh;
+	UPROPERTY(EditDefaultsOnly)
+	UStaticMeshComponent* ProjectileMesh;
 
 	UPROPERTY(EditDefaultsOnly)
-		UProjectileMovementComponent* ProjectileMovementComp;
+	UProjectileMovementComponent* ProjectileMovementComp;
 
 	UPROPERTY(EditDefaultsOnly)
-		USphereComponent* CollisionSphere;
+	USphereComponent* CollisionSphere;
 
-	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UParticleSystem> LaunchBlastFX;
 
 public:	
 	// Called every frame
@@ -41,5 +43,5 @@ public:
 	void Launch();
 	
 	UPROPERTY(EditDefaultsOnly)
-		float LaunchSpeed = 1000.0f;
+	float LaunchSpeed = 1000.0f;
 };
