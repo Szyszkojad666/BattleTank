@@ -9,7 +9,7 @@
 class UStaticMeshComponent;
 class UProjectileMovementComponent;
 class USphereComponent;
-class UParticleSystem;
+class UParticleSystemComponent;
 
 UCLASS()
 class BATTLETANK_API AProjectile : public AActor
@@ -33,9 +33,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	USphereComponent* CollisionSphere;
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UParticleSystem> LaunchBlastFX;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -44,4 +41,8 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly)
 	float LaunchSpeed = 1000.0f;
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UParticleSystemComponent* LaunchBlastFX = nullptr;
 };

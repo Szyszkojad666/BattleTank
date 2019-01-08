@@ -6,7 +6,7 @@
 #include "Classes/Components/SphereComponent.h"
 #include "Classes/Kismet/GameplayStatics.h"
 #include "Classes/Engine/World.h"
-#include "Classes/Particles/ParticleSystem.h"
+#include "Classes/Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -15,9 +15,15 @@ AProjectile::AProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SM_Projectile"));
 	ProjectileMovementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
+	LaunchBlastFX = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Launch Blast FX"));
 	ProjectileMovementComp->bAutoActivate = false;
-	ProjectileMesh->SetupAttachment(RootComponent);
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere"));
+	SetRootComponent(ProjectileMesh);
+	CollisionSphere->SetupAttachment(ProjectileMesh);
+	CollisionSphere->SetNotifyRigidBodyCollision(true);
+	CollisionSphere->SetCollisionProfileName("Projectile");
+	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	LaunchBlastFX->AttachTo(CollisionSphere);
 }
 
 // Called when the game starts or when spawned
@@ -36,9 +42,5 @@ void AProjectile::Launch()
 {
 	ProjectileMovementComp->SetVelocityInLocalSpace(FVector::ForwardVector * LaunchSpeed);
 	ProjectileMovementComp->Activate();
-	if (LaunchBlastFX)
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), LaunchBlastFX->GetDefaultObject<UParticleSystem>(), GetActorTransform(), true);
-	}
 }
 

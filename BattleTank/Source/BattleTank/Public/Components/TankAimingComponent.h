@@ -73,7 +73,9 @@ protected:
 
 private: 
 	
+	UPROPERTY(EditDefaultsOnly)
 	float ReloadTimeInSeconds = 1.0f;
+
 	void MoveBarrel(FVector ShotDirection);
 	void SetReloadedAndFiringState();
 };
