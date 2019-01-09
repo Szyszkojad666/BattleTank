@@ -16,14 +16,18 @@ AProjectile::AProjectile()
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SM_Projectile"));
 	ProjectileMovementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	LaunchBlastFX = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Launch Blast FX"));
+	ImpactBlastFX = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Impact Blast FX"));
 	ProjectileMovementComp->bAutoActivate = false;
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere"));
 	SetRootComponent(ProjectileMesh);
 	CollisionSphere->SetupAttachment(ProjectileMesh);
 	CollisionSphere->SetNotifyRigidBodyCollision(true);
 	CollisionSphere->SetCollisionProfileName("Projectile");
+	CollisionSphere->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	LaunchBlastFX->AttachTo(CollisionSphere);
+	LaunchBlastFX->SetupAttachment(CollisionSphere);
+	ImpactBlastFX->SetupAttachment(CollisionSphere);
+	ImpactBlastFX->SetAutoActivate(false);
 }
 
 // Called when the game starts or when spawned
@@ -42,5 +46,14 @@ void AProjectile::Launch()
 {
 	ProjectileMovementComp->SetVelocityInLocalSpace(FVector::ForwardVector * LaunchSpeed);
 	ProjectileMovementComp->Activate();
+}
+
+void AProjectile::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit)
+{
+	LaunchBlastFX->Deactivate();
+	ImpactBlastFX->Activate();
+	CollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ProjectileMesh->SetHiddenInGame(true);
+	SetLifeSpan(4.0f);
 }
 
