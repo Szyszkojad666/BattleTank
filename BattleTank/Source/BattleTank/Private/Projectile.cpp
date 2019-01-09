@@ -19,10 +19,11 @@ AProjectile::AProjectile()
 	ImpactBlastFX = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Impact Blast FX"));
 	ProjectileMovementComp->bAutoActivate = false;
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere"));
-	SetRootComponent(ProjectileMesh);
-	CollisionSphere->SetupAttachment(ProjectileMesh);
+	SetRootComponent(CollisionSphere);
+	ProjectileMesh->SetupAttachment(CollisionSphere);
 	CollisionSphere->SetNotifyRigidBodyCollision(true);
 	CollisionSphere->SetCollisionProfileName("Projectile");
+	//CollisionSphere->SetSimulatePhysics(true);
 	CollisionSphere->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	LaunchBlastFX->SetupAttachment(CollisionSphere);
