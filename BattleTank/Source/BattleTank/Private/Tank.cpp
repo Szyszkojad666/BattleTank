@@ -16,6 +16,12 @@
 #include "TankMovementComponent.h"
 
 
+float ATank::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	TankHealth = FMath::Clamp(TankHealth - Damage, 0.0f, TankHealth);
+	return 0.0f;
+}
+
 // Sets default values
 ATank::ATank()
 {

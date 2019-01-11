@@ -7,6 +7,8 @@
 #include "Classes/Kismet/GameplayStatics.h"
 #include "Classes/Engine/World.h"
 #include "Classes/Particles/ParticleSystemComponent.h"
+#include "Classes/PhysicsEngine/RadialForceComponent.h"
+#include "Classes/Kismet/GameplayStatics.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -29,6 +31,9 @@ AProjectile::AProjectile()
 	LaunchBlastFX->SetupAttachment(CollisionSphere);
 	ImpactBlastFX->SetupAttachment(CollisionSphere);
 	ImpactBlastFX->SetAutoActivate(false);
+	RadialForce = CreateDefaultSubobject<URadialForceComponent>(TEXT("Radial Force"));
+	RadialForce->SetupAttachment(CollisionSphere);
+	RadialForce->SetAutoActivate(false);
 }
 
 // Called when the game starts or when spawned
@@ -55,6 +60,17 @@ void AProjectile::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor,
 	ImpactBlastFX->Activate();
 	CollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ProjectileMesh->SetHiddenInGame(true);
-	SetLifeSpan(4.0f);
+	SetLifeSpan(3.0f);
+	RadialForce->Activate();
+	RadialForce->FireImpulse();
+	UGameplayStatics::ApplyRadialDamage(
+		this,
+		ProjectileDamage,
+		GetActorLocation(),
+		RadialForce->Radius,
+		UDamageType::StaticClass(),
+		TArray<AActor*>(),
+		GetOwner()
+	);
 }
 

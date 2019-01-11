@@ -54,35 +54,40 @@ public:
 	// Getter functions
 
 	UFUNCTION(BlueprintCallable)
-		FORCEINLINE UTankTurretComponent* GetTurret() { if (TurretComp) return TurretComp; else return nullptr; }
+	FORCEINLINE UTankTurretComponent* GetTurret() { if (TurretComp) return TurretComp; else return nullptr; }
 
 	UFUNCTION(BlueprintCallable)
-		FORCEINLINE UTankMovementComponent* GetTankMovementComponent() { return TankMovementComp; }
+	FORCEINLINE UTankMovementComponent* GetTankMovementComponent() { return TankMovementComp; }
 
 	UFUNCTION(BlueprintCallable)
-		FORCEINLINE UTankAimingComponent* GetTankAimingComponent() { return TankAimingComponent; }
+	FORCEINLINE UTankAimingComponent* GetTankAimingComponent() { return TankAimingComponent; }
 
 	//Max force on track in newtons
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		float TrackMaxDrivingForce = 40000000;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		UCameraComponent* Camera;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		USpringArmComponent* SpringArm;
+	float TrackMaxDrivingForce = 40000000;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		USceneComponent* Gimbal;
+	float TankHealth;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UCameraComponent* Camera;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USpringArmComponent* SpringArm;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USceneComponent* Gimbal;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UStaticMeshComponent* SM_Body;
+	UStaticMeshComponent* SM_Body;
 
 	UPROPERTY(BlueprintAssignable)
-		FAimBarrel AimBarrel;
+	FAimBarrel AimBarrel;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float ReloadTimeInSeconds;
+	float ReloadTimeInSeconds;
+
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
 	ATank();
