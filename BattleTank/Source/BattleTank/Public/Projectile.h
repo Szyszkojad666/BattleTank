@@ -41,7 +41,7 @@ public:
 	void Launch();
 	
 	UPROPERTY(EditDefaultsOnly)
-	float LaunchSpeed = 1000.0f;
+	float LaunchSpeed;
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);

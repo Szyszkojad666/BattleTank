@@ -34,6 +34,8 @@ AProjectile::AProjectile()
 	RadialForce = CreateDefaultSubobject<URadialForceComponent>(TEXT("Radial Force"));
 	RadialForce->SetupAttachment(CollisionSphere);
 	RadialForce->SetAutoActivate(false);
+	ProjectileDamage = 15.0f;
+	LaunchSpeed = 6000.0f;
 }
 
 // Called when the game starts or when spawned

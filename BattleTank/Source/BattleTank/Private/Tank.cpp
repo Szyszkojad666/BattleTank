@@ -15,13 +15,6 @@
 #include "Classes/Engine/World.h"
 #include "TankMovementComponent.h"
 
-
-float ATank::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
-{
-	TankHealth = FMath::Clamp(TankHealth - Damage, 0.0f, TankHealth);
-	return 0.0f;
-}
-
 // Sets default values
 ATank::ATank()
 {
@@ -51,6 +44,19 @@ ATank::ATank()
 	SpringArm->bUsePawnControlRotation = false;
 	Camera->SetupAttachment(SpringArm);
 	ReloadTimeInSeconds = 2.0f;
+	TankMaxHealth = 100.0f;
+	TankCurrentHealth = TankMaxHealth;
+}
+
+float ATank::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	int32 DamagePoints = FMath::RoundToInt(Damage);
+	TankCurrentHealth= FMath::Clamp(TankCurrentHealth - DamagePoints, 0, TankMaxHealth);
+	if (TankCurrentHealth == 0)
+	{
+		Destroy();
+	}
+	return Damage;
 }
 
 void ATank::InitializeAimingComponentVariables()

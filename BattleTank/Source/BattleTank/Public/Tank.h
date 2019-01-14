@@ -50,24 +50,32 @@ protected:
 
 	void InitializeMovementComponentVariables();
 
+	int32 TankCurrentHealth;
+
 public:	
 	// Getter functions
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE UTankTurretComponent* GetTurret() { if (TurretComp) return TurretComp; else return nullptr; }
+	FORCEINLINE UTankTurretComponent* GetTurret() const { if (TurretComp) return TurretComp; else return nullptr; }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE UTankMovementComponent* GetTankMovementComponent() { return TankMovementComp; }
+	FORCEINLINE UTankMovementComponent* GetTankMovementComponent() const { return TankMovementComp; }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE UTankAimingComponent* GetTankAimingComponent() { return TankAimingComponent; }
+	FORCEINLINE UTankAimingComponent* GetTankAimingComponent() const { return TankAimingComponent; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE float GetMaxHealth() const { return TankMaxHealth; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE float GetCurrentHealth() const { return TankCurrentHealth; }
 
 	//Max force on track in newtons
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float TrackMaxDrivingForce = 40000000;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float TankHealth;
+	int32 TankMaxHealth;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UCameraComponent* Camera;
