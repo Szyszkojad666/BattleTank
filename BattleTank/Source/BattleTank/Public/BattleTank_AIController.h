@@ -23,19 +23,30 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Aiming")
 	FORCEINLINE UTankAimingComponent* GetTankAimingComponent() const { return TankAimingComp; }
 
+	UFUNCTION()
+	void OnPawnDeath();
+
 	ATank* GetPlayerTank();
+	
 	virtual void Tick(float DeltaTime) override;
+	
 	void AimTowardsCrosshair();
+	
 	virtual FPathFollowingRequestResult MoveTo(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr* OutPath = nullptr) override;
+	
+	virtual void SetPawn(APawn* InPawn) override;
 
 private:
 	
 	UTankMovementComponent* TankMovementComp;
+
 	UTankAimingComponent* TankAimingComp;
 	
 	APawn* ControlledPawn;
+
 	ATank* PlayerTank;
 
 	void BeginPlay() override;
+
 	void Fire();
 };

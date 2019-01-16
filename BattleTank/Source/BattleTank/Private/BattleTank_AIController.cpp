@@ -68,4 +68,18 @@ FPathFollowingRequestResult ABattleTank_AIController::MoveTo(const FAIMoveReques
 	return FPathFollowingRequestResult();
 }
 
+void ABattleTank_AIController::SetPawn(APawn* InPawn)
+{
+	Super::SetPawn(InPawn);
+	if (InPawn)
+	{
+		ATank* PossessedTank = Cast<ATank>(InPawn);
+		if (!ensure(PossessedTank)) { return; }
+		PossessedTank->OnTankDeath.AddUniqueDynamic(this, &ABattleTank_AIController::OnPawnDeath);
+	}
+}
 
+void ABattleTank_AIController::OnPawnDeath()
+{
+	ControlledPawn->SetLifeSpan(0.1f);
+}

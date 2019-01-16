@@ -111,4 +111,20 @@ void ABattleTank_PlayerController::SetupInputComponent()
 	InputComponent->BindAction("Fire", IE_Pressed, this, &ABattleTank_PlayerController::Fire);
 }
 	
+void ABattleTank_PlayerController::SetPawn(APawn* InPawn)
+{
+	Super::SetPawn(InPawn);
+	if (InPawn)
+	{
+		auto PossessedTank = Cast<ATank>(InPawn);
+		if (!ensure(PossessedTank)) { return; }
+		PossessedTank->OnTankDeath.AddUniqueDynamic(this, &ABattleTank_PlayerController::OnPawnDeath);
+		OnPossessed.AddUniqueDynamic(this, &ABattleTank_PlayerController::K2_OnPossessed);
+		OnPossessed.Broadcast();
+	}
+}
 
+void ABattleTank_PlayerController::OnPawnDeath()
+{
+
+}

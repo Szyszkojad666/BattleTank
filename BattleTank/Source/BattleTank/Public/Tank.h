@@ -7,6 +7,7 @@
 #include "Tank.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAimBarrel, FRotator, Rotation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTankDeath);
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -69,6 +70,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetCurrentHealth() const { return TankCurrentHealth; }
+
+	FOnTankDeath OnTankDeath;
+
+	void Die();
 
 	//Max force on track in newtons
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

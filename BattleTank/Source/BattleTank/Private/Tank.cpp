@@ -54,7 +54,7 @@ float ATank::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AControl
 	TankCurrentHealth= FMath::Clamp(TankCurrentHealth - DamagePoints, 0, TankMaxHealth);
 	if (TankCurrentHealth == 0)
 	{
-		Destroy();
+		Die();
 	}
 	return Damage;
 }
@@ -83,4 +83,7 @@ void ATank::BeginPlay()
 	InitializeMovementComponentVariables();
 }
 
-
+void ATank::Die()
+{
+	OnTankDeath.Broadcast();
+}

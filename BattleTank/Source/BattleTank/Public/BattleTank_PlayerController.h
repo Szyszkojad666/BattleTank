@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "BattleTank_PlayerController.generated.h"
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPossessed);
 
 class ATank;
 class UTankAimingComponent;
@@ -35,16 +35,31 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float CrosshairYLocation;
 
-private:
+	UFUNCTION()
+	void OnPawnDeath();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void K2_OnPossessed();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnPossessed OnPossessed;
+
+private:
+	
 	ABattleTank_PlayerController();
+
 	ATank* ControlledTank;
+
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void SetPawn(APawn* InPawn) override;
 
 protected:
 	// Called when the game starts or when spawned
 	void BeginPlay() override;
+
 	void GetAimLocation();
+
 	void Fire();
 
 	UFUNCTION(BlueprintCallable)
