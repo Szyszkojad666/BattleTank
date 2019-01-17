@@ -8,6 +8,7 @@
 #include "TankMovementComponent.h"
 #include "TankAimingComponent.h"
 #include "Classes/GameFramework/Pawn.h"
+#include "HealthComponent.h"
 
 void ABattleTank_AIController::BeginPlay()
 {
@@ -75,7 +76,7 @@ void ABattleTank_AIController::SetPawn(APawn* InPawn)
 	{
 		ATank* PossessedTank = Cast<ATank>(InPawn);
 		if (!ensure(PossessedTank)) { return; }
-		PossessedTank->OnTankDeath.AddUniqueDynamic(this, &ABattleTank_AIController::OnPawnDeath);
+		PossessedTank->GetHealthComponent()->OnDeath.AddUniqueDynamic(this, &ABattleTank_AIController::OnPawnDeath);
 	}
 }
 

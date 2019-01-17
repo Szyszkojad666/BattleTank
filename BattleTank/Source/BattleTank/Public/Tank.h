@@ -19,6 +19,7 @@ class UTankBarrelComponent;
 class UTankTurretComponent;
 class UTankMovementComponent;
 class UTankTrackComponent;
+class UHealthComponent;
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -47,11 +48,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UTankTrackComponent* TrackL;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UHealthComponent* HealthComponent;
+
 	void InitializeAimingComponentVariables();
 
 	void InitializeMovementComponentVariables();
-
-	int32 TankCurrentHealth;
 
 public:	
 	// Getter functions
@@ -66,21 +68,11 @@ public:
 	FORCEINLINE UTankAimingComponent* GetTankAimingComponent() const { return TankAimingComponent; }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float GetMaxHealth() const { return TankMaxHealth; }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float GetCurrentHealth() const { return TankCurrentHealth; }
-
-	FOnTankDeath OnTankDeath;
-
-	void Die();
+	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 
 	//Max force on track in newtons
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float TrackMaxDrivingForce = 40000000;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 TankMaxHealth;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UCameraComponent* Camera;
@@ -99,8 +91,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ReloadTimeInSeconds;
-
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
 	ATank();

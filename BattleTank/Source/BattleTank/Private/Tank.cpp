@@ -14,6 +14,7 @@
 #include "Projectile.h"
 #include "Classes/Engine/World.h"
 #include "TankMovementComponent.h"
+#include "HealthComponent.h"
 
 // Sets default values
 ATank::ATank()
@@ -30,6 +31,7 @@ ATank::ATank()
 	Barrel = CreateDefaultSubobject<UTankBarrelComponent>(TEXT("Barrel"));
 	TrackR = CreateDefaultSubobject<UTankTrackComponent>(TEXT("TrackR"));
 	TrackL = CreateDefaultSubobject<UTankTrackComponent>(TEXT("TrackL"));
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	//BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	//BoxCollision->SetupAttachment(RootComponent);
 	//BoxCollision->SetBoxExtent(FVector(400, 400, 100));
@@ -44,19 +46,6 @@ ATank::ATank()
 	SpringArm->bUsePawnControlRotation = false;
 	Camera->SetupAttachment(SpringArm);
 	ReloadTimeInSeconds = 2.0f;
-	TankMaxHealth = 100.0f;
-	TankCurrentHealth = TankMaxHealth;
-}
-
-float ATank::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
-{
-	int32 DamagePoints = FMath::RoundToInt(Damage);
-	TankCurrentHealth= FMath::Clamp(TankCurrentHealth - DamagePoints, 0, TankMaxHealth);
-	if (TankCurrentHealth == 0)
-	{
-		Die();
-	}
-	return Damage;
 }
 
 void ATank::InitializeAimingComponentVariables()
@@ -81,9 +70,4 @@ void ATank::BeginPlay()
 	Super::BeginPlay();
 	InitializeAimingComponentVariables();
 	InitializeMovementComponentVariables();
-}
-
-void ATank::Die()
-{
-	OnTankDeath.Broadcast();
 }

@@ -11,6 +11,7 @@
 #include "Engine/World.h"
 #include "BattleTank.h"
 #include "TankAimingComponent.h"
+#include "HealthComponent.h"
 
 static int32 DebugAimingDrawing = 0;
 FAutoConsoleVariableRef CVARDebugAimingDrawing(
@@ -118,7 +119,7 @@ void ABattleTank_PlayerController::SetPawn(APawn* InPawn)
 	{
 		auto PossessedTank = Cast<ATank>(InPawn);
 		if (!ensure(PossessedTank)) { return; }
-		PossessedTank->OnTankDeath.AddUniqueDynamic(this, &ABattleTank_PlayerController::OnPawnDeath);
+		PossessedTank->GetHealthComponent()->OnDeath.AddUniqueDynamic(this, &ABattleTank_PlayerController::OnPawnDeath);
 		OnPossessed.AddUniqueDynamic(this, &ABattleTank_PlayerController::K2_OnPossessed);
 		OnPossessed.Broadcast();
 	}
@@ -126,5 +127,5 @@ void ABattleTank_PlayerController::SetPawn(APawn* InPawn)
 
 void ABattleTank_PlayerController::OnPawnDeath()
 {
-
+	StartSpectatingOnly();
 }
