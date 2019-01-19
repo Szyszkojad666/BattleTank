@@ -74,9 +74,12 @@ void ABattleTank_AIController::SetPawn(APawn* InPawn)
 	Super::SetPawn(InPawn);
 	if (InPawn)
 	{
-		ATank* PossessedTank = Cast<ATank>(InPawn);
-		if (!ensure(PossessedTank)) { return; }
-		PossessedTank->GetHealthComponent()->OnDeath.AddUniqueDynamic(this, &ABattleTank_AIController::OnPawnDeath);
+		UHealthComponent* HealthComp;
+		HealthComp = InPawn->FindComponentByClass<UHealthComponent>();
+		if (HealthComp)
+		{
+			HealthComp->OnDeath.AddUniqueDynamic(this, &ABattleTank_AIController::OnPawnDeath);
+		}
 	}
 }
 
