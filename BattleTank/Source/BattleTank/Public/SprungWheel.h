@@ -28,13 +28,10 @@ public:
 
 private:
 	//Components
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* Mass;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UStaticMeshComponent* Wheel;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPhysicsConstraintComponent* Spring;
-
 };

@@ -4,7 +4,7 @@
 #include "SprungWheel.h"
 #include "Classes/Engine/World.h"
 #include "Classes/GameFramework/Actor.h"
-
+#include "Classes/Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 USpawnPointComponent::USpawnPointComponent()
@@ -23,11 +23,12 @@ void USpawnPointComponent::BeginPlay()
 	Super::BeginPlay();
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	auto NewActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn);
+	auto NewActor = GetWorld()->SpawnActorDeferred<AActor>(ActorToSpawn,GetComponentTransform(), GetOwner());
 	if (NewActor)
 	{
-		AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
+		NewActor->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
 	}
+	UGameplayStatics::FinishSpawningActor(NewActor, GetComponentTransform());
 }
 
 

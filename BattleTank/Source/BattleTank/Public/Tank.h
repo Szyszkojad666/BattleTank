@@ -83,7 +83,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USceneComponent* Gimbal;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* SM_Body;
 
 	UPROPERTY(BlueprintAssignable)
