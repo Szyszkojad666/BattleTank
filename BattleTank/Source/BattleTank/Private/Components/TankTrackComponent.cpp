@@ -2,35 +2,36 @@
 
 #include "TankTrackComponent.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
+#include "SprungWheel.h"
+#include "SpawnPointComponent.h"
 
 UTankTrackComponent::UTankTrackComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	this->OnComponentHit.AddDynamic(this, &UTankTrackComponent::OnCompHit);
 	SetNotifyRigidBodyCollision(true);
 }
 
-
-float UTankTrackComponent::CalculateSlippageSpeed()
+TArray<class ASprungWheel*> UTankTrackComponent::GetWheels() const
 {
-	auto SideVelocity = FVector::DotProduct(GetRightVector(), GetComponentVelocity());
-	return SideVelocity;
+	TArray<ASprungWheel*> Wheels;
+	TArray<USceneComponent*> Children;
+	GetChildrenComponents(true, Children);
+	for (USceneComponent* SceneComp : Children)
+	{
+		auto* SpawnerComponent = Cast<USpawnPointComponent>(SceneComp);
+		if (SpawnerComponent)
+		{
+			AActor* SpawnedChild = SpawnerComponent->GetSpawnedActor();
+			auto SprungWheel = Cast<ASprungWheel>(SpawnedChild);
+			if (SprungWheel)
+			{
+				Wheels.Add(SprungWheel);
+			}
+		}
+	}
+	return Wheels;
 }
 
-FVector UTankTrackComponent::CalculateCorrection()
-{
-	auto DeltaTime = GetWorld()->GetDeltaSeconds();
-	auto Correction = -CalculateSlippageSpeed() / DeltaTime * GetRightVector();
-	return Correction;
-}
-
-void UTankTrackComponent::ApplySideMovementCorrection()
-{
-	if (!ensure(OwnerRoot)) { return; }
-	auto DeltaTime = GetWorld()->GetDeltaSeconds();
-	auto CorrectionForce = OwnerRoot->GetMass() * CalculateCorrection() / 2;
-	OwnerRoot->AddForce(CorrectionForce);
-}
 
 void UTankTrackComponent::BeginPlay()
 {
@@ -40,22 +41,17 @@ void UTankTrackComponent::BeginPlay()
 
 void UTankTrackComponent::SetThrottle(float Throttle)
 {
-	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, 1);
+	float CurrentThrottle = FMath::Clamp<float>(Throttle, -1, 1);
+	DriveTrack(CurrentThrottle);
 }
 
-void UTankTrackComponent::DriveTrack()
+void UTankTrackComponent::DriveTrack(float CurrentThrottle)
 {
-	FVector Force = GetForwardVector() * CurrentThrottle * TankMaxDrivingForce;
-	FVector ForceLocation = GetComponentLocation();
-	if (OwnerRoot)
-	OwnerRoot->AddForceAtLocation(Force, ForceLocation);
-	FString TrackName = GetName();
-	//UE_LOG(LogTemp, Warning, TEXT("%s's current throttle is: %f: "), *TrackName, CurrentThrottle);
-}
-
-void UTankTrackComponent::OnCompHit(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
-{
-	DriveTrack();
-	ApplySideMovementCorrection();
-	CurrentThrottle = 0;
+	auto ForceApplied = CurrentThrottle * TankMaxDrivingForce;
+	auto Wheels = GetWheels();
+	auto ForcePerWheel = ForceApplied / Wheels.Num();
+	for (ASprungWheel * Wheel : Wheels)
+	{
+		Wheel->AddDrivingForce(ForcePerWheel);
+	}
 }

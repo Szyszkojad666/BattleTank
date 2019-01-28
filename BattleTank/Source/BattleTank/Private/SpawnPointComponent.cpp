@@ -16,21 +16,19 @@ USpawnPointComponent::USpawnPointComponent()
 	// ...
 }
 
-
 // Called when the game starts
 void USpawnPointComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	auto NewActor = GetWorld()->SpawnActorDeferred<AActor>(ActorToSpawn,GetComponentTransform(), GetOwner());
-	if (NewActor)
+	SpawnedActor = GetWorld()->SpawnActorDeferred<ASprungWheel>(ActorToSpawn,GetComponentTransform(), GetOwner());
+	if (SpawnedActor)
 	{
-		NewActor->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
+		SpawnedActor->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
 	}
-	UGameplayStatics::FinishSpawningActor(NewActor, GetComponentTransform());
+	UGameplayStatics::FinishSpawningActor(SpawnedActor, GetComponentTransform());
 }
-
 
 // Called every frame
 void USpawnPointComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

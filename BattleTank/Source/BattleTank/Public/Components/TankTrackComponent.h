@@ -6,6 +6,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "TankTrackComponent.generated.h"
 
+class ASprungWheel;
+class ASpawnPointComponent;
 /**
  * 
  */
@@ -19,9 +21,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Input)
 	void SetThrottle(float Throttle);
 
-	UFUNCTION()
-	void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
 	float TankMaxDrivingForce;
 
 	FORCEINLINE UFUNCTION()
@@ -31,13 +30,13 @@ private:
 
 	UTankTrackComponent();
 
-protected:
-	float CalculateSlippageSpeed();
-	FVector CalculateCorrection();
-	void ApplySideMovementCorrection();
-	void DriveTrack();
-	UStaticMeshComponent* OwnerRoot;
-	virtual void BeginPlay() override;
-	float CurrentThrottle = 0;
+	TArray<class ASprungWheel*> GetWheels() const;
 
+protected:
+
+	void DriveTrack(float CurrentThrottle);
+
+	UStaticMeshComponent* OwnerRoot;
+
+	virtual void BeginPlay() override;
 };
